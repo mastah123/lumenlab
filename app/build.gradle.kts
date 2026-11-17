@@ -9,15 +9,15 @@ val keystorePath: String? = System.getenv("KEYSTORE_PATH")
 val hasSigning = !keystorePath.isNullOrBlank() && file(keystorePath).exists()
 
 android {
-    namespace = "com.astrocam.app"
+    namespace = "com.lumenlab.app"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.astrocam.app"
+        applicationId = "com.lumenlab.app"
         minSdk = 28
         targetSdk = 34
-        versionCode = 20
-        versionName = "0.16.0"
+        versionCode = 21
+        versionName = "0.17.0"
     }
 
     signingConfigs {

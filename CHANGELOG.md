@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.17.0] - 2026-11-05
+
+### Changed
+- The app is now called Lumenlab. The display name, package and application ID (`com.lumenlab.app`), project name, theme, screen titles, report and share titles, gallery folder (`Pictures/Lumenlab`), file name prefix (`LUMEN_`) and the build artifact (`lumenlab-apks`) were renamed.
+- Because the application ID changed, Android treats this as a new app. Uninstall the old one first; settings, the device profile and dark frames are not carried over.
+- The temperature chip on Home sits below the Settings button.
+- The launcher icon is unchanged. The release signing secrets are unchanged.
+
 ## [0.16.0] - 2026-11-05
 
 ### Added
@@ -129,7 +137,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Star-based alignment: finds stars in each frame and lines the frames up by voting on the shift (translation only).
 - Brightness boost (off, medium, strong) with the same stretch applied to the stack and to a single frame, so the two compare fairly.
 - Single frame versus stacked view for comparing the result.
-- Results saved to Pictures/AstroCamera/STACKED and shown with how many frames were used or rejected.
+- Results saved to Pictures/Lumenlab/STACKED and shown with how many frames were used or rejected.
 - Version number and build number card at the top of Settings.
 
 ### Changed
@@ -141,7 +149,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Multi-frame capture: choose 1, 5, 10, 20, 50 or 100 frames, all taken with the same settings.
 - Frame counter, progress bar and a stop button during a sequence; the total exposure is shown before you start.
-- Each sequence is saved in its own folder, Pictures/AstroCamera/SESSION_<time>, with numbered frames.
+- Each sequence is saved in its own folder, Pictures/Lumenlab/SESSION_<time>, with numbered frames.
 - Frames are saved in the background while the next one is captured.
 - Minimal processing for multi-frame manual captures (noise reduction and edge enhancement off, white balance locked where the phone allows it) so frames stack more consistently.
 - RAW Capture Test in Settings, Experimental: takes a real RAW photo, checks the pixels, and saves a DNG.
@@ -155,7 +163,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - Capture button with a self-timer (off, 2, 5 or 10 seconds) and an on-screen countdown; tap the shutter during the countdown to cancel.
-- Photos are saved as JPEG to Pictures/AstroCamera with the settings in the file name.
+- Photos are saved as JPEG to Pictures/Lumenlab with the settings in the file name.
 - Private capture log (captures.jsonl) recording the requested and camera-reported exposure, ISO and focus for every photo.
 - Fallback to a preview-only session when a camera cannot run preview and photo streams together.
 
@@ -166,12 +174,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.6.1] - 2026-11-05
 
 ### Fixed
-- Astro Camera preview scrolled away with the controls. It now stays fixed at the top while only the controls scroll.
+- Lumenlab preview scrolled away with the controls. It now stays fixed at the top while only the controls scroll.
 
 ## [0.6.0] - 2026-11-05
 
 ### Added
-- Astro Camera screen with a live Camera2 preview.
+- Lumenlab screen with a live Camera2 preview.
 - Manual exposure, ISO and focus controls, with an Infinity button for focus.
 - Exposure slider capped at the verified limit from the device profile; an unverified camera is capped at 1/30 s.
 - Live readout of the exposure, ISO and frame time the camera reports.
@@ -180,7 +188,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - App is locked to portrait orientation.
-- Home screen opens Astro Camera first.
+- Home screen opens Lumenlab first.
 
 ## [0.5.0] - 2026-11-05
 

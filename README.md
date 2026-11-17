@@ -1,12 +1,12 @@
-# Astro Camera
+# Lumenlab
 
-[![Build](https://github.com/YOUR_USER/YOUR_REPO/actions/workflows/build.yml/badge.svg?branch=master)](https://github.com/YOUR_USER/YOUR_REPO/actions/workflows/build.yml)
+[![Build](https://github.com/YOUR_USER/lumenlab/actions/workflows/build.yml/badge.svg?branch=master)](https://github.com/YOUR_USER/lumenlab/actions/workflows/build.yml)
 
 An Android astrophotography camera that uses the real capabilities of your phone's camera hardware.
 
 > Understand your camera. Unlock its capabilities. Capture the night sky.
 
-Astro Camera does not assume every phone is the same. It inspects the device through the Camera2 API and shows what the hardware can actually do before you shoot.
+Lumenlab does not assume every phone is the same. It inspects the device through the Camera2 API and shows what the hardware can actually do before you shoot.
 
 ## Status
 
@@ -33,7 +33,7 @@ Version 0.16.0 covers **Stages 1 to 5**, including a **Stacking Studio**, automa
 - Phone temperature meter and protection that pauses or stops a burst before the phone overheats
 - Stacking Studio: align and average frames, or make star trails
 - Multi-frame capture (up to 100 frames) saved to a session folder with minimal processing
-- Capture button with self-timer; photos saved to Pictures/AstroCamera with their settings logged
+- Capture button with self-timer; photos saved to Pictures/Lumenlab with their settings logged
 - Live preview with manual exposure, ISO and focus, limited to what the phone really does
 - Detects every camera on the device, including logical and physical lenses
 - Reports exposure range, ISO range, manual and infinity focus, RAW/DNG, sensor size, output formats and hardware level
@@ -60,7 +60,7 @@ APKs are written to `app/build/outputs/apk/`.
 
 ## Continuous integration
 
-`.github/workflows/build.yml` builds debug and release APKs on every push and pull request to `master`, and uploads them as the `astro-camera-apks` artifact.
+`.github/workflows/build.yml` builds debug and release APKs on every push and pull request to `master`, and uploads them as the `lumenlab-apks` artifact.
 
 ### Release signing
 
@@ -84,7 +84,7 @@ Without these secrets the release APK is built unsigned. Never commit the keysto
 ## Project structure
 
 ```
-app/src/main/java/com/astrocam/app/
+app/src/main/java/com/lumenlab/app/
 ├── MainActivity.kt        Entry point and navigation
 ├── camera/                Camera2 detection, exposure probe and reports
 └── ui/                    Compose screens and theme

@@ -4,7 +4,7 @@
 set -euo pipefail
 
 OUT="${1:-release.jks}"
-ALIAS="${2:-astrocamera}"
+ALIAS="${2:-lumenlab}"
 
 keytool -genkeypair -v \
   -keystore "$OUT" -alias "$ALIAS" \

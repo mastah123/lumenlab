@@ -52,7 +52,7 @@ jobs:
       - name: Upload APKs
         uses: actions/upload-artifact@v4
         with:
-          name: astro-camera-apks
+          name: lumenlab-apks
           path: app/build/outputs/apk/**/*.apk
           if-no-files-found: error
 
