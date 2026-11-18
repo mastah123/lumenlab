@@ -20,7 +20,20 @@ import android.view.TextureView
 import android.view.View
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.FlashAuto
+import androidx.compose.material.icons.filled.FlashOff
+import androidx.compose.material.icons.filled.FlashOn
+import androidx.compose.material.icons.filled.GridOff
+import androidx.compose.material.icons.filled.GridOn
+import androidx.compose.material.icons.filled.Highlight
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.Timer
+import androidx.compose.material3.Icon
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -75,6 +88,7 @@ import com.lumenlab.app.camera.CaptureStore
 import com.lumenlab.app.camera.ControlLimits
 import com.lumenlab.app.camera.CrashLog
 import com.lumenlab.app.camera.DarkFrames
+import com.lumenlab.app.camera.FlashMode
 import com.lumenlab.app.camera.FrameRef
 import com.lumenlab.app.camera.LiveReading
 import com.lumenlab.app.camera.ManualSettings
@@ -280,6 +294,69 @@ private fun BoostPill(on: Boolean, modifier: Modifier, onClick: () -> Unit) {
     )
 }
 
+private val TIMER_STEPS = listOf(0, 3, 5, 10)
+
+private fun nextFlash(current: FlashMode, mode: Mode): FlashMode {
+    val choices = if (mode == Mode.Normal) listOf(FlashMode.Off, FlashMode.Auto, FlashMode.On, FlashMode.Torch)
+    else listOf(FlashMode.Off, FlashMode.Torch)
+    val i = choices.indexOf(current)
+    return choices[(i + 1) % choices.size]
+}
+
+private fun flashIcon(mode: FlashMode): ImageVector = when (mode) {
+    FlashMode.Off -> Icons.Filled.FlashOff
+    FlashMode.Auto -> Icons.Filled.FlashAuto
+    FlashMode.On -> Icons.Filled.FlashOn
+    FlashMode.Torch -> Icons.Filled.Highlight
+}
+
+/** Composition guides over the preview: off, thirds, quarters, golden ratio, diagonals. */
+@Composable
+private fun GridOverlay(kind: Int) {
+    if (kind == 0) return
+    Canvas(Modifier.fillMaxSize()) {
+        val line = Color.White.copy(alpha = 0.45f)
+        val stroke = 1.dp.toPx()
+        val w = size.width
+        val h = size.height
+        fun across(x: Float) = drawLine(line, Offset(x, 0f), Offset(x, h), stroke)
+        fun down(y: Float) = drawLine(line, Offset(0f, y), Offset(w, y), stroke)
+        when (kind) {
+            1 -> { across(w / 3); across(2 * w / 3); down(h / 3); down(2 * h / 3) }
+            2 -> for (i in 1..3) { across(w * i / 4); down(h * i / 4) }
+            3 -> { across(w * 0.382f); across(w * 0.618f); down(h * 0.382f); down(h * 0.618f) }
+            else -> {
+                drawLine(line, Offset(0f, 0f), Offset(w, h), stroke)
+                drawLine(line, Offset(w, 0f), Offset(0f, h), stroke)
+                across(w / 2)
+                down(h / 2)
+            }
+        }
+    }
+}
+
+@Composable
+private fun BarIcon(
+    icon: ImageVector,
+    description: String,
+    active: Boolean,
+    enabled: Boolean = true,
+    label: String? = null,
+    onClick: () -> Unit,
+) {
+    val colors = MaterialTheme.colorScheme
+    Row(
+        modifier = Modifier.clip(RoundedCornerShape(12.dp)).clickable(enabled = enabled, onClick = onClick)
+            .padding(horizontal = 10.dp, vertical = 8.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Icon(icon, description, tint = if (!enabled) colors.outline else if (active) colors.primary else colors.onBackground)
+        if (label != null) {
+            Text(label, style = MaterialTheme.typography.labelSmall, color = colors.primary, modifier = Modifier.padding(start = 3.dp))
+        }
+    }
+}
+
 @Composable
 private fun DarkPill(ready: Boolean, modifier: Modifier, onClick: () -> Unit) {
     val colors = MaterialTheme.colorScheme
@@ -303,18 +380,19 @@ fun AstroScreen(
     limits: ControlLimits?,
     settings: AppSettings,
     onSettings: (AppSettings) -> Unit,
-    startInTrails: Boolean,
-    onBack: () -> Unit,
+    mode: Mode,
+    onOpenSettings: () -> Unit,
+    tabs: @Composable () -> Unit,
 ) {
     val colors = MaterialTheme.colorScheme
     Scaffold(containerColor = colors.background) { padding ->
         if (limits == null) {
-            Column(Modifier.padding(padding).padding(20.dp)) {
-                TextButton(onClick = onBack) { Text("‹ Back") }
-                Text("No rear camera was found on this device.")
+            Column(Modifier.padding(padding).fillMaxSize()) {
+                Text("No rear camera was found on this device.", modifier = Modifier.weight(1f).padding(20.dp))
+                tabs()
             }
         } else {
-            AstroContent(limits, settings, onSettings, startInTrails, onBack, Modifier.padding(padding))
+            AstroContent(limits, settings, onSettings, mode, onOpenSettings, tabs, Modifier.padding(padding))
         }
     }
 }
@@ -324,8 +402,9 @@ private fun AstroContent(
     limits: ControlLimits,
     settings: AppSettings,
     onSettings: (AppSettings) -> Unit,
-    startInTrails: Boolean,
-    onBack: () -> Unit,
+    mode: Mode,
+    onOpenSettings: () -> Unit,
+    tabs: @Composable () -> Unit,
     modifier: Modifier,
 ) {
     val context = LocalContext.current
@@ -355,13 +434,14 @@ private fun AstroContent(
 
     // The camera opens in Auto. Manual controls are one tap away.
     var manual by remember { mutableStateOf(false) }
+    var flash by remember { mutableStateOf(FlashMode.Off) }
     var active by remember { mutableStateOf(Control.Exposure) }
     var panelOpen by remember { mutableStateOf(false) }
     var exposureFrac by remember { mutableStateOf(1f) }
     var isoFrac by remember { mutableStateOf(limits.isoFraction(800)) }
     var focusFrac by remember { mutableStateOf(0f) }
     var autoFocus by remember { mutableStateOf(false) }
-    val trails = startInTrails
+    val trails = mode == Mode.Trails
 
     var countdown by remember { mutableStateOf(0) }
     var busy by remember { mutableStateOf(false) }
@@ -390,15 +470,17 @@ private fun AstroContent(
     val level = Thermal.level(thermal, settings.tempPreset)
 
     val ms = ManualSettings(
-        manual = manual && limits.manualAvailable,
+        manual = manual && limits.manualAvailable && mode != Mode.Normal,
         exposureNs = limits.exposureAt(exposureFrac),
         iso = limits.isoAt(isoFrac),
         focusDiopters = focusFrac * limits.minFocusDiopters,
         autoFocus = autoFocus,
+        flash = if (mode == Mode.Normal || flash == FlashMode.Torch) flash else FlashMode.Off,
     )
     val latestManual by rememberUpdatedState(ms)
     val latestSettings by rememberUpdatedState(settings)
     val latestTrails by rememberUpdatedState(trails)
+    val latestMode by rememberUpdatedState(mode)
     // A dark frame matches one exposure and ISO. Re-checked whenever those change or one is captured.
     val darkAvailable = remember(ms.exposureNs, ms.iso, ms.manual, darkTick) {
         ms.manual && DarkFrames.exists(context, ms.exposureNs, ms.iso)
@@ -425,8 +507,18 @@ private fun AstroContent(
         active = Control.Every
         panelOpen = true
     }
+    LaunchedEffect(mode) {
+        when (mode) {
+            Mode.Trails -> enterTrails()
+            Mode.Normal -> {
+                manual = false
+                panelOpen = false
+                if (flash == FlashMode.Torch) flash = FlashMode.Off
+            }
+            else -> Unit
+        }
+    }
     LaunchedEffect(Unit) {
-        if (startInTrails) enterTrails()
         // Show the newest photo next to the shutter when the camera opens.
         val recent = withContext(Dispatchers.IO) { RecentCapture.latest(context) }
         if (recent != null && lastThumb == null) {
@@ -485,7 +577,7 @@ private fun AstroContent(
             liveDone = 0
             stackFraction = null
             frameIndex = 0
-            val app = latestSettings
+            val app = latestSettings.let { if (latestMode == Mode.Normal) it.copy(frameCount = 1, stackBatch = -1) else it }
             frameTotal = app.frameCount
             val method = StackMode.Average
             val darkFor = latestManual
@@ -947,12 +1039,14 @@ private fun AstroContent(
     val readout = (if (trails) "★ " else "") +
         if (ms.manual) "$exposureText · ISO ${ms.iso}" + (if (limits.manualFocus) " · $focusText" else "") else "Auto"
     val burst = busy && frameTotal > 1 && countdown == 0
-    val showPanel = panelOpen && (active.isSetting || (ms.manual && (active != Control.Focus || limits.manualFocus)))
+    val showPanel = mode != Mode.Normal && panelOpen && (active.isSetting || (ms.manual && (active != Control.Focus || limits.manualFocus)))
     val megapixels = config?.jpegSize?.let { it.width * it.height / 1e6 } ?: 8.0
     val sizeEach = megapixels * 0.4
     val totalText = formatTotal(ms.exposureNs * settings.frameCount)
 
     // Details under the top bar: settings with estimated time and size, in Auto and in Manual.
+    val effFrames = if (mode == Mode.Normal) 1 else settings.frameCount
+    val effStack = if (mode == Mode.Normal) -1 else settings.stackBatch
     val details = buildString {
         if (ms.manual) {
             append("$exposureText · ISO ${ms.iso}")
@@ -961,10 +1055,10 @@ private fun AstroContent(
             reading?.let { append(" · ${it.exposureNs?.let(::formatExposure) ?: "n/a"} · ISO ${it.iso ?: "n/a"}") }
         }
         val perFrameNs = if (ms.manual) ms.exposureNs else (reading?.frameNs ?: reading?.exposureNs)
-        if (settings.frameCount > 1) {
-            append(" · ${settings.frameCount} frames")
-            perFrameNs?.let { append(" · ≈ ${formatTotal(it * settings.frameCount)}") }
-            append(" · ≈ ${formatStorage(settings.frameCount * sizeEach)}")
+        if (effFrames > 1) {
+            append(" · ${effFrames} frames")
+            perFrameNs?.let { append(" · ≈ ${formatTotal(it * effFrames)}") }
+            append(" · ≈ ${formatStorage(effFrames * sizeEach)}")
         } else {
             append(" · ≈ ${formatStorage(sizeEach)}")
         }
@@ -972,8 +1066,8 @@ private fun AstroContent(
         if (settings.boost) append(" · boost")
         if (ms.manual && darkAvailable) append(" · dark ✓")
         if (settings.nightBin) append(" · 2×2")
-        if (settings.frameCount > 1 && settings.stackBatch >= 0) {
-            append(" · stack ${StackPlan.short(settings.stackBatch)}")
+        if (effFrames > 1 && effStack >= 0) {
+            append(" · stack ${StackPlan.short(effStack)}")
             if (settings.liveStacking) append(" (live)")
             append(if (settings.deleteOriginals) " · delete originals" else " · keep originals")
         }
@@ -999,23 +1093,35 @@ private fun AstroContent(
     }
 
     Column(modifier = modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
-        // Top bar: back, current settings, star trails, heat.
+        // Top bar: flash, timer and grid on the left; settings with the temperature below it on the right.
         Row(
-            modifier = Modifier.fillMaxWidth().padding(horizontal = 4.dp),
-            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 6.dp),
+            verticalAlignment = Alignment.Top,
         ) {
-            TextButton(onClick = onBack, enabled = !busy) { Text("‹ Back") }
-            Text(readout, modifier = Modifier.weight(1f), textAlign = TextAlign.Center,
-                style = MaterialTheme.typography.bodyMedium)
-            if (trails) {
-                Text("★ Trails", style = MaterialTheme.typography.labelLarge, color = colors.primary,
-                    modifier = Modifier.padding(horizontal = 6.dp))
+            Row(Modifier.weight(1f), verticalAlignment = Alignment.CenterVertically) {
+                if (limits.camera.flash) {
+                    BarIcon(flashIcon(flash), "Flash", flash != FlashMode.Off, !busy) { flash = nextFlash(flash, mode) }
+                }
+                if (mode != Mode.Trails) {
+                    val currentTimer = TIMER_STEPS.minByOrNull { abs(it - settings.timerSeconds) } ?: 0
+                    BarIcon(
+                        Icons.Filled.Timer, "Timer", currentTimer > 0, !busy,
+                        if (currentTimer > 0) "${currentTimer}s" else null,
+                    ) {
+                        onSettings(settings.copy(timerSeconds = TIMER_STEPS[(TIMER_STEPS.indexOf(currentTimer) + 1) % TIMER_STEPS.size]))
+                    }
+                }
+                BarIcon(
+                    if (settings.grid == 0) Icons.Filled.GridOff else Icons.Filled.GridOn, "Grid", settings.grid != 0, !busy,
+                ) { onSettings(settings.copy(grid = (settings.grid + 1) % 5)) }
             }
-            TempChip(thermal, level) { tempDialog = true }
-            Spacer(Modifier.width(8.dp))
+            Column(horizontalAlignment = Alignment.End) {
+                BarIcon(Icons.Filled.Settings, "Settings", false, !busy) { onOpenSettings() }
+                TempChip(thermal, level) { tempDialog = true }
+            }
         }
 
-        // Details sit right under the Back button.
+        // Details sit right under the top bar.
         Text(
             when {
                 !hasPermission -> "Camera permission is needed for the preview."
@@ -1059,6 +1165,8 @@ private fun AstroContent(
                     modifier = Modifier.fillMaxSize(),
                     update = { tv -> applyPreviewBoost(tv, settings.boost) },
                 )
+                GridOverlay(settings.grid)
+                if (mode != Mode.Normal) {
                 BoostPill(settings.boost, Modifier.align(Alignment.TopEnd)) {
                     onSettings(settings.copy(boost = !settings.boost))
                 }
@@ -1068,6 +1176,7 @@ private fun AstroContent(
                         !ms.manual -> status = "Switch to Manual first. A dark frame matches one exposure and ISO."
                         else -> darkDialog = true
                     }
+                }
                 }
                 if (showPanel) {
                     val at = Modifier.align(Alignment.BottomCenter)
@@ -1150,7 +1259,8 @@ private fun AstroContent(
 
         // One strip of settings. Each chip opens its slider over the preview.
         // Star trails mode swaps the last three for frames per shot, interval and duration.
-        Row(
+        // NORMAL is a plain camera, so it has no strip.
+        if (mode != Mode.Normal) Row(
             modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp, vertical = 8.dp),
             horizontalArrangement = Arrangement.spacedBy(6.dp),
         ) {
@@ -1185,6 +1295,8 @@ private fun AstroContent(
             }
         }
 
+        tabs()
+
         // Bottom row: last capture, shutter, Manual or Auto.
         Row(
             modifier = Modifier.fillMaxWidth().padding(horizontal = 28.dp, vertical = 8.dp),
@@ -1212,13 +1324,14 @@ private fun AstroContent(
                         busy -> { job?.cancel(); status = "Stopped. Frames already saved were kept." }
                         else -> {
                             val needsAsk = if (trails) settings.originals == OriginalsPolicy.Ask
-                            else settings.frameCount > 1 && settings.stackBatch >= 0 && settings.originals == OriginalsPolicy.Ask
+                            else mode != Mode.Normal && settings.frameCount > 1 && settings.stackBatch >= 0 &&
+                                settings.originals == OriginalsPolicy.Ask
                             if (needsAsk) askDialog = true else begin(settings.originals == OriginalsPolicy.Delete)
                         }
                     }
                 },
             )
-            StripChip(
+            if (mode == Mode.Normal) Spacer(Modifier.width(72.dp)) else StripChip(
                 "MODE", if (ms.manual) "Manual" else "Auto", ms.manual, limits.manualAvailable && !busy,
                 Modifier.width(72.dp),
             ) { manual = !manual }

@@ -26,12 +26,16 @@ import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withTimeoutOrNull
 
+/** Flash for photos. Torch keeps the light on, which helps with close-ups. */
+enum class FlashMode { Off, Auto, On, Torch }
+
 data class ManualSettings(
     val manual: Boolean,
     val exposureNs: Long,
     val iso: Int,
     val focusDiopters: Float,
     val autoFocus: Boolean = false,
+    val flash: FlashMode = FlashMode.Off,
 )
 
 /** What the camera says it used for a frame. */
@@ -64,7 +68,7 @@ fun previewConfig(context: Context, cameraId: String): PreviewConfig? {
     return PreviewConfig(size, aspect, orientation, jpeg)
 }
 
-private fun CaptureRequest.Builder.applyControls(s: ManualSettings) {
+private fun CaptureRequest.Builder.applyControls(s: ManualSettings, forCapture: Boolean = false) {
     if (s.manual) {
         set(CaptureRequest.CONTROL_AE_MODE, CaptureRequest.CONTROL_AE_MODE_OFF)
         set(CaptureRequest.SENSOR_EXPOSURE_TIME, s.exposureNs)
@@ -77,9 +81,19 @@ private fun CaptureRequest.Builder.applyControls(s: ManualSettings) {
             set(CaptureRequest.LENS_FOCUS_DISTANCE, s.focusDiopters)
         }
     } else {
-        set(CaptureRequest.CONTROL_AE_MODE, CaptureRequest.CONTROL_AE_MODE_ON)
+        // The flash only fires for the photo. The viewfinder stays unlit unless the torch is on.
+        val ae = when {
+            forCapture && s.flash == FlashMode.On -> CaptureRequest.CONTROL_AE_MODE_ON_ALWAYS_FLASH
+            forCapture && s.flash == FlashMode.Auto -> CaptureRequest.CONTROL_AE_MODE_ON_AUTO_FLASH
+            else -> CaptureRequest.CONTROL_AE_MODE_ON
+        }
+        set(CaptureRequest.CONTROL_AE_MODE, ae)
         set(CaptureRequest.CONTROL_AF_MODE, CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_PICTURE)
     }
+    set(
+        CaptureRequest.FLASH_MODE,
+        if (s.flash == FlashMode.Torch) CaptureRequest.FLASH_MODE_TORCH else CaptureRequest.FLASH_MODE_OFF,
+    )
 }
 
 private fun TotalCaptureResult.toReading() = LiveReading(
@@ -210,7 +224,7 @@ class PreviewController(
         try {
             val request = dev.createCaptureRequest(CameraDevice.TEMPLATE_STILL_CAPTURE).apply {
                 addTarget(reader.surface)
-                applyControls(settings)
+                applyControls(settings, forCapture = true)
                 set(CaptureRequest.JPEG_ORIENTATION, sensorOrientation)
                 set(CaptureRequest.JPEG_QUALITY, 95.toByte())
                 if (minimal) {

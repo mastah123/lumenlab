@@ -42,6 +42,7 @@ data class AppSettings(
     val boost: Boolean = false,
     val liveStacking: Boolean = false,
     val nightBin: Boolean = false,
+    val grid: Int = 0,
     val trailFrames: Int = 3,
     val trailInterval: Int = 10,
     val trailMinutes: Int = 30,
@@ -77,6 +78,7 @@ object SettingsStore {
             boost = p.getBoolean("boost_preview", d.boost),
             liveStacking = p.getBoolean("live_stacking", d.liveStacking),
             nightBin = p.getBoolean("night_bin", d.nightBin),
+            grid = p.getInt("grid", d.grid),
             trailFrames = p.getInt("trail_frames", d.trailFrames),
             trailInterval = p.getInt("trail_interval", d.trailInterval),
             trailMinutes = p.getInt("trail_minutes", d.trailMinutes),
@@ -96,6 +98,7 @@ object SettingsStore {
             .putBoolean("boost_preview", s.boost)
             .putBoolean("live_stacking", s.liveStacking)
             .putBoolean("night_bin", s.nightBin)
+            .putInt("grid", s.grid)
             .putInt("trail_frames", s.trailFrames)
             .putInt("trail_interval", s.trailInterval)
             .putInt("trail_minutes", s.trailMinutes)

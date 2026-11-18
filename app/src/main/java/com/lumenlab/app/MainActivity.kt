@@ -7,7 +7,6 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -24,8 +23,10 @@ import com.lumenlab.app.camera.controlLimits
 import com.lumenlab.app.camera.deviceName
 import com.lumenlab.app.ui.AstroScreen
 import com.lumenlab.app.ui.AstroTheme
-import com.lumenlab.app.ui.HomeScreen
 import com.lumenlab.app.ui.LiveTestScreen
+import com.lumenlab.app.ui.Mode
+import com.lumenlab.app.ui.ModeTabs
+import com.lumenlab.app.ui.MoreScreen
 import com.lumenlab.app.ui.NightTheme
 import com.lumenlab.app.ui.ProbeScreen
 import com.lumenlab.app.ui.RawScreen
@@ -33,19 +34,19 @@ import com.lumenlab.app.ui.SettingsScreen
 import com.lumenlab.app.ui.StackScreen
 import com.lumenlab.app.ui.TesterScreen
 
-private enum class Screen { Home, Astro, Stack, Tester, Settings, Probe, Raw, LiveTest }
+private enum class Screen { Camera, Stack, Tester, Settings, Probe, Raw, LiveTest }
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         CrashLog.install(applicationContext)
         enableEdgeToEdge()
-        setContent { AstroApp() }
+        setContent { LumenlabApp() }
     }
 }
 
 @Composable
-private fun AstroApp() {
+private fun LumenlabApp() {
     val context = LocalContext.current
     val cameras = remember { CameraDetector.detect(context) }
     var limits by remember { mutableStateOf(ProfileStore.load(context)) }
@@ -62,39 +63,43 @@ private fun AstroApp() {
         settings = it
         SettingsStore.save(context, it)
     }
-    // The app opens straight on the camera. Home is one tap back.
-    var screen by rememberSaveable { mutableStateOf(Screen.Astro) }
-    var trailsStart by rememberSaveable { mutableStateOf(false) }
+    // The app opens on the camera, in NORMAL. The tabs switch modes without leaving the screen.
+    var screen by rememberSaveable { mutableStateOf(Screen.Camera) }
+    var mode by rememberSaveable { mutableStateOf(Mode.Normal) }
 
     AstroTheme(if (settings.redMode) NightTheme.Red else NightTheme.Dark) {
-        BackHandler(enabled = screen != Screen.Home) {
+        BackHandler(enabled = screen != Screen.Camera) {
             screen = when (screen) {
                 Screen.Probe, Screen.Raw, Screen.LiveTest -> Screen.Settings
-                else -> Screen.Home
+                else -> Screen.Camera
             }
         }
         when (screen) {
-            Screen.Home -> HomeScreen(
-                cameras = cameras,
-                profile = profile,
-                settings = settings,
-                onOpenAstro = { trailsStart = false; screen = Screen.Astro },
-                onOpenTrails = { trailsStart = true; screen = Screen.Astro },
-                onOpenStack = { screen = Screen.Stack },
-                onOpenTester = { screen = Screen.Tester },
-                onOpenSettings = { screen = Screen.Settings },
-            )
-            Screen.Astro -> key(trailsStart) {
-                AstroScreen(
-                    limits = limitsForControls,
-                    settings = settings,
-                    onSettings = updateSettings,
-                    startInTrails = trailsStart,
-                    onBack = { screen = Screen.Home },
-                )
+            Screen.Camera -> {
+                val tabs: @androidx.compose.runtime.Composable () -> Unit = { ModeTabs(mode) { mode = it } }
+                if (mode == Mode.More) {
+                    MoreScreen(
+                        cameras = cameras,
+                        profile = profile,
+                        settings = settings,
+                        onOpenStack = { screen = Screen.Stack },
+                        onOpenTester = { screen = Screen.Tester },
+                        onOpenSettings = { screen = Screen.Settings },
+                        tabs = tabs,
+                    )
+                } else {
+                    AstroScreen(
+                        limits = limitsForControls,
+                        settings = settings,
+                        onSettings = updateSettings,
+                        mode = mode,
+                        onOpenSettings = { screen = Screen.Settings },
+                        tabs = tabs,
+                    )
+                }
             }
-            Screen.Stack -> StackScreen(settings = settings, onBack = { screen = Screen.Home })
-            Screen.Tester -> TesterScreen(cameras = cameras, profile = profile, onBack = { screen = Screen.Home })
+            Screen.Stack -> StackScreen(settings = settings, onBack = { screen = Screen.Camera })
+            Screen.Tester -> TesterScreen(cameras = cameras, profile = profile, onBack = { screen = Screen.Camera })
             Screen.Settings -> SettingsScreen(
                 settings = settings,
                 onSettings = updateSettings,
@@ -107,7 +112,7 @@ private fun AstroApp() {
                 onOpenProbe = { screen = Screen.Probe },
                 onOpenRaw = { screen = Screen.Raw },
                 onOpenLive = { screen = Screen.LiveTest },
-                onBack = { screen = Screen.Home },
+                onBack = { screen = Screen.Camera },
             )
             Screen.Probe -> ProbeScreen(
                 cameras = cameras,

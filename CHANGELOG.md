@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.18.0] - 2026-11-05
+
+### Added
+- Mode tabs above the shutter, like a phone camera: NORMAL, ASTRO, TRAILS and MORE. The camera opens on NORMAL.
+- NORMAL is a plain auto camera: one photo, with flash, timer and grid. It has no stacking controls.
+- ASTRO is the manual camera with boost, dark frames, frames, timer and stacking. TRAILS is the interval star trails mode.
+- MORE replaces Home: Stacking Studio (manual stacking), Camera Tester, the Phone Check summary and a shortcut to the tests.
+- Icon bar over the preview: flash, timer, grid and settings, with the temperature below the settings icon.
+- Flash: off, auto, on and torch in NORMAL; off and torch in the other modes. Shown only if the camera has a flash. The torch is turned off when you switch back to NORMAL.
+- Timer steps of off, 3, 5 and 10 seconds from the icon bar.
+- Grid overlays: off, thirds, quarters, golden ratio and diagonals.
+
+### Removed
+- The Home screen and the Back button on the camera screen. Use the tabs and the system back button.
+
 ## [0.17.0] - 2026-11-05
 
 ### Changed
