@@ -76,7 +76,8 @@ private fun LumenlabApp() {
         }
         when (screen) {
             Screen.Camera -> {
-                val tabs: @androidx.compose.runtime.Composable () -> Unit = { ModeTabs(mode) { mode = it } }
+                // The lambda is named (onMode) because ModeTabs has an optional parameter after it.
+                val tabs: @Composable () -> Unit = { ModeTabs(mode = mode, onMode = { mode = it }) }
                 if (mode == Mode.More) {
                     MoreScreen(
                         cameras = cameras,
