@@ -23,6 +23,7 @@ import com.lumenlab.app.camera.controlLimits
 import com.lumenlab.app.camera.deviceName
 import com.lumenlab.app.ui.AstroScreen
 import com.lumenlab.app.ui.AstroTheme
+import com.lumenlab.app.ui.DoubleExposureScreen
 import com.lumenlab.app.ui.LiveTestScreen
 import com.lumenlab.app.ui.Mode
 import com.lumenlab.app.ui.ModeTabs
@@ -78,8 +79,8 @@ private fun LumenlabApp() {
             Screen.Camera -> {
                 // The lambda is named (onMode) because ModeTabs has an optional parameter after it.
                 val tabs: @Composable () -> Unit = { ModeTabs(mode = mode, onMode = { mode = it }) }
-                if (mode == Mode.More) {
-                    MoreScreen(
+                when (mode) {
+                    Mode.More -> MoreScreen(
                         cameras = cameras,
                         profile = profile,
                         settings = settings,
@@ -88,8 +89,13 @@ private fun LumenlabApp() {
                         onOpenSettings = { screen = Screen.Settings },
                         tabs = tabs,
                     )
-                } else {
-                    AstroScreen(
+                    Mode.DoubleExp -> DoubleExposureScreen(
+                        limits = limitsForControls,
+                        settings = settings,
+                        onOpenSettings = { screen = Screen.Settings },
+                        tabs = tabs,
+                    )
+                    else -> AstroScreen(
                         limits = limitsForControls,
                         settings = settings,
                         onSettings = updateSettings,

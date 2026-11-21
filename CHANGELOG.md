@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.19.0] - 2026-11-05
+
+### Added
+- Double exposure mode, in a new DOUBLE tab between TRAILS and MORE.
+  - Take a first photo, or pick one from the gallery. It then shows as a ghost over the live view so the second photo can be lined up with it, with a slider for the ghost's visibility.
+  - Take the second photo or pick it from the gallery, then choose how they blend: Blend (an even mix), Lighten (the brighter parts of both) or Silhouette (the second photo shows through the dark parts of the first), with a strength slider.
+  - The blend previews live at reduced size and is saved at full size to Pictures/Lumenlab/DOUBLE.
+
+### Removed
+- The old `com.astrocam.app` source folder, which was left behind by the rename, and the unused Home screen.
+
 ## [0.18.0] - 2026-11-05
 
 ### Added

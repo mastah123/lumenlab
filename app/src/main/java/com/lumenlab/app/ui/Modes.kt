@@ -23,6 +23,7 @@ enum class Mode(val label: String) {
     Normal("NORMAL"),
     Astro("ASTRO"),
     Trails("TRAILS"),
+    DoubleExp("DOUBLE"),
     More("MORE"),
 }
 
@@ -37,7 +38,7 @@ fun ModeTabs(mode: Mode, onMode: (Mode) -> Unit, enabled: Boolean = true) {
         Mode.values().forEach { m ->
             val selected = m == mode
             Column(
-                modifier = Modifier.clickable(enabled = enabled) { onMode(m) }.padding(horizontal = 10.dp, vertical = 6.dp),
+                modifier = Modifier.clickable(enabled = enabled) { onMode(m) }.padding(horizontal = 8.dp, vertical = 6.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 Text(
