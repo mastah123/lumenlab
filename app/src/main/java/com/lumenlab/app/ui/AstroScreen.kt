@@ -32,9 +32,11 @@ import androidx.compose.material.icons.filled.GridOn
 import androidx.compose.material.icons.filled.FlashlightOn
 import androidx.compose.material.icons.filled.PhotoLibrary
 import androidx.compose.material.icons.filled.Save
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Timer
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.foundation.background
@@ -97,6 +99,9 @@ import com.lumenlab.app.camera.LiveReading
 import com.lumenlab.app.camera.ManualSettings
 import com.lumenlab.app.camera.Originals
 import com.lumenlab.app.camera.OriginalsPolicy
+import com.lumenlab.app.camera.StarExposure
+import com.lumenlab.app.camera.exposureFraction
+import com.lumenlab.app.camera.focusSharpness
 import com.lumenlab.app.camera.PreviewController
 import com.lumenlab.app.camera.ProgressTracker
 import com.lumenlab.app.camera.formatProgress
@@ -444,6 +449,10 @@ private fun AstroContent(
     var isoFrac by remember { mutableStateOf(limits.isoFraction(800)) }
     var focusFrac by remember { mutableStateOf(0f) }
     var autoFocus by remember { mutableStateOf(false) }
+    var previewView by remember { mutableStateOf<TextureView?>(null) }
+    var sharpness by remember { mutableStateOf(0.0) }
+    var bestSharpness by remember { mutableStateOf(0.0) }
+    val starSuggestion = remember(limits.camera) { StarExposure.suggest(limits.camera) }
     val trails = mode == Mode.Trails
 
     var countdown by remember { mutableStateOf(0) }
@@ -1099,6 +1108,32 @@ private fun AstroContent(
         )
     }
 
+    // Focus assist: while the focus slider is open, read the live preview a few times a second.
+    val assistFocus = showPanel && active == Control.Focus
+    LaunchedEffect(assistFocus) {
+        if (!assistFocus) return@LaunchedEffect
+        sharpness = 0.0
+        bestSharpness = 0.0
+        val frame = Bitmap.createBitmap(160, 120, Bitmap.Config.ARGB_8888)
+        while (true) {
+            delay(350)
+            val view = previewView ?: continue
+            if (!view.isAvailable) continue
+            view.getBitmap(frame)
+            val value = withContext(Dispatchers.Default) {
+                val pixels = IntArray(frame.width * frame.height)
+                frame.getPixels(pixels, 0, frame.width, 0, 0, frame.width, frame.height)
+                val luma = IntArray(pixels.size) { i ->
+                    val p = pixels[i]
+                    (((p shr 16) and 0xFF) * 299 + ((p shr 8) and 0xFF) * 587 + (p and 0xFF) * 114) / 1000
+                }
+                focusSharpness(luma, frame.width, frame.height)
+            }
+            sharpness = value
+            if (value > bestSharpness) bestSharpness = value
+        }
+    }
+
     Column(modifier = modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
         // Top bar: flash, timer and grid on the left; settings with the temperature below it on the right.
         Row(
@@ -1155,6 +1190,7 @@ private fun AstroContent(
                 AndroidView(
                     factory = { ctx ->
                         TextureView(ctx).apply {
+                            previewView = this
                             surfaceTextureListener = object : TextureView.SurfaceTextureListener {
                                 override fun onSurfaceTextureAvailable(st: SurfaceTexture, w: Int, h: Int) {
                                     texture = st
@@ -1190,9 +1226,25 @@ private fun AstroContent(
                     when (active) {
                         Control.Exposure -> SliderPanel(
                             "Exposure", exposureText, exposureFrac, { exposureFrac = it }, exposureSnaps,
-                            if (limits.exposureVerified) "Verified max ${formatExposure(limits.maxExposureNs)}"
-                            else "Unverified max ${formatExposure(limits.maxExposureNs)}. Run the Long Exposure Test.",
+                            (starSuggestion?.let {
+                                val ns = StarExposure.clampNs(it.seconds, limits)
+                                "Stars stay sharp up to about ${formatExposure(ns)} (${it.method}" +
+                                    (if (ns < (it.seconds * 1e9).toLong()) ", limited by the phone). " else "). ")
+                            } ?: "") +
+                                if (limits.exposureVerified) "Verified max ${formatExposure(limits.maxExposureNs)}"
+                                else "Unverified max ${formatExposure(limits.maxExposureNs)}. Run the Long Exposure Test.",
                             at,
+                            extra = {
+                                if (starSuggestion != null) {
+                                    TextButton(onClick = {
+                                        exposureFrac = limits.exposureFraction(StarExposure.clampNs(starSuggestion.seconds, limits))
+                                    }) {
+                                        Icon(Icons.Filled.Star, null, Modifier.size(16.dp))
+                                        Spacer(Modifier.width(4.dp))
+                                        Text("Stars", maxLines = 1)
+                                    }
+                                }
+                            },
                         )
                         Control.Iso -> SliderPanel(
                             "ISO", ms.iso.toString(), isoFrac, { isoFrac = it }, isoSnaps,
@@ -1200,7 +1252,23 @@ private fun AstroContent(
                         )
                         Control.Focus -> SliderPanel(
                             "Focus", focusText, focusFrac, { focusFrac = it; autoFocus = false }, focusSnaps,
-                            "Reported by the phone, not yet verified. Left end is infinity.", at,
+                            "Point at a bright star or a far light and move the slider until Sharpness peaks. Left end is infinity.", at,
+                            below = {
+                                val shown = if (bestSharpness > 0.0) (sharpness / bestSharpness).toFloat().coerceIn(0f, 1f) else 0f
+                                Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(vertical = 2.dp)) {
+                                    Text("Sharpness", style = MaterialTheme.typography.labelMedium, color = colors.onSurfaceVariant)
+                                    LinearProgressIndicator(
+                                        progress = { shown },
+                                        modifier = Modifier.weight(1f).padding(horizontal = 10.dp),
+                                        color = if (shown >= 0.9f) colors.primary else colors.onSurfaceVariant,
+                                    )
+                                    Text(
+                                        if (shown >= 0.9f) "Best" else "${(shown * 100).roundToInt()}%",
+                                        style = MaterialTheme.typography.labelMedium, color = colors.onBackground,
+                                    )
+                                    TextButton(onClick = { bestSharpness = sharpness }) { Text("Reset") }
+                                }
+                            },
                             extra = {
                                 TextButton(onClick = { autoFocus = true }) { Text(if (autoFocus) "● Auto" else "Auto") }
                                 TextButton(onClick = { autoFocus = false; focusFrac = 0f }) { Text("Infinity") }
@@ -1414,6 +1482,7 @@ private fun SliderPanel(
     hint: String,
     modifier: Modifier,
     extra: @Composable () -> Unit = {},
+    below: @Composable () -> Unit = {},
 ) {
     val colors = MaterialTheme.colorScheme
     Column(
@@ -1428,6 +1497,7 @@ private fun SliderPanel(
                 modifier = Modifier.padding(start = 8.dp))
         }
         SnapSlider(value = frac, onValueChange = onFrac, snaps = snaps)
+        below()
         Text(hint, style = MaterialTheme.typography.bodySmall, color = colors.onSurfaceVariant)
     }
 }

@@ -62,3 +62,9 @@ fun ControlLimits.isoFraction(iso: Int): Float =
     if (isoMax <= isoMin) 0f
     else ((ln(iso.coerceIn(isoMin, isoMax).toDouble()) - ln(isoMin.toDouble())) /
         (ln(isoMax.toDouble()) - ln(isoMin.toDouble()))).toFloat()
+
+/** Where an exposure time falls on the slider, 0..1. The reverse of [exposureAt]. */
+fun ControlLimits.exposureFraction(ns: Long): Float =
+    if (maxExposureNs <= minExposureNs) 0f
+    else ((ln(ns.coerceIn(minExposureNs, maxExposureNs).toDouble()) - ln(minExposureNs.toDouble())) /
+        (ln(maxExposureNs.toDouble()) - ln(minExposureNs.toDouble()))).toFloat()

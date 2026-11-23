@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.24.0] - 2026-11-23
+
+### Added
+- Star exposure helper. The EXP slider panel now says how long an exposure can be before stars smear into trails, worked out from the camera's focal length, aperture and sensor size (the NPF rule, or the 500 rule when the pixel size is unknown). A Stars button sets the slider to that time, kept inside what the phone can really do.
+- Focus assist. While the FOCUS slider is open, the live preview is checked a few times a second and a Sharpness bar shows how tight the brightest points are, with Best when you are near the sharpest value seen. Reset starts the comparison again. Point at a bright star or a far light and move the slider until the bar peaks.
+- Unit tests for the star exposure maths, the exposure slider mapping and the sharpness measure.
+
+### Notes
+- The suggested time is a guide, not a promise: phone lens data is not always reported correctly, and the sky's position changes how fast stars move.
+
 ## [0.23.0] - 2026-11-23
 
 ### Added
