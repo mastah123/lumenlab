@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.23.0] - 2026-11-23
+
+### Added
+- Gallery, opened from a new tile in the MORE tab. It lists everything saved under Pictures/Lumenlab as a thumbnail grid grouped by day.
+  - Filter chips with counts: Results (photos, stacks, panoramas and double exposures), Photos, Stacked, Panorama, Double, Frames (burst frames and stack batches) and Other. Results hides burst frames so a 500 frame burst does not bury the stacked picture.
+  - Tap a picture to view it full screen and swipe between pictures. Share, delete and an Open in another app button (for zooming) are in the viewer.
+  - Long press to select several pictures, then share or delete them together. Deleting asks first.
+  - Android 10 and newer read pictures through the media store; Android 9 reads the app's own Pictures folder and shares through a file provider.
+- Unit tests for the gallery's folder categories, filters, size and date text.
+
+### Notes
+- Android may refuse to delete pictures made by an earlier install of the app. The gallery says how many could not be deleted.
+
 ## [0.22.0] - 2026-11-23
 
 ### Changed

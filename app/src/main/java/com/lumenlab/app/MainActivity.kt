@@ -26,6 +26,7 @@ import com.lumenlab.app.ui.AstroTheme
 import com.lumenlab.app.ui.DoubleExposureScreen
 import com.lumenlab.app.ui.LiveTestScreen
 import com.lumenlab.app.ui.Mode
+import com.lumenlab.app.ui.GalleryScreen
 import com.lumenlab.app.ui.ModeTabs
 import com.lumenlab.app.ui.MoreScreen
 import com.lumenlab.app.ui.NightTheme
@@ -36,7 +37,7 @@ import com.lumenlab.app.ui.SettingsScreen
 import com.lumenlab.app.ui.StackScreen
 import com.lumenlab.app.ui.TesterScreen
 
-private enum class Screen { Camera, Stack, Tester, Settings, Probe, Raw, LiveTest }
+private enum class Screen { Camera, Gallery, Stack, Tester, Settings, Probe, Raw, LiveTest }
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -85,6 +86,7 @@ private fun LumenlabApp() {
                         cameras = cameras,
                         profile = profile,
                         settings = settings,
+                        onOpenGallery = { screen = Screen.Gallery },
                         onOpenStack = { screen = Screen.Stack },
                         onOpenTester = { screen = Screen.Tester },
                         onOpenSettings = { screen = Screen.Settings },
@@ -112,6 +114,7 @@ private fun LumenlabApp() {
                     )
                 }
             }
+            Screen.Gallery -> GalleryScreen(onBack = { screen = Screen.Camera })
             Screen.Stack -> StackScreen(settings = settings, onBack = { screen = Screen.Camera })
             Screen.Tester -> TesterScreen(cameras = cameras, profile = profile, onBack = { screen = Screen.Camera })
             Screen.Settings -> SettingsScreen(

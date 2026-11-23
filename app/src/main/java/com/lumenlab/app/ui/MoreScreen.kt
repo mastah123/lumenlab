@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Layers
 import androidx.compose.material.icons.filled.PhotoCamera
+import androidx.compose.material.icons.filled.PhotoLibrary
 import androidx.compose.material.icons.filled.Science
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Icon
@@ -55,6 +56,7 @@ fun MoreScreen(
     cameras: List<CameraInfo>,
     profile: DeviceProfile,
     settings: AppSettings,
+    onOpenGallery: () -> Unit,
     onOpenStack: () -> Unit,
     onOpenTester: () -> Unit,
     onOpenSettings: () -> Unit,
@@ -96,6 +98,8 @@ fun MoreScreen(
                     }
                 }
 
+                Tile(Icons.Filled.PhotoLibrary, "Gallery", "Your photos, stacks, panoramas and burst frames",
+                    Modifier.fillMaxWidth(), cardColors, onOpenGallery)
                 Tile(
                     Icons.Filled.Layers, "Stacking Studio",
                     if (captures == 0) "Stack saved frames by hand. No captures yet" else

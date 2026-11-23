@@ -10,7 +10,7 @@ Lumenlab does not assume every phone is the same. It inspects the device through
 
 ## Status
 
-Version 0.22.0 covers **Stages 1 to 5**, plus camera modes (NORMAL, ASTRO, TRAILS, PANO, DOUBLE and MORE), a **Stacking Studio**, automatic stacking while capturing, storage-saving options and temperature protection. Earlier stages: capability detection, an experimental **long exposure probe**, a live preview with manual controls, and multi-frame capture with a self-timer. A **RAW capture test** checks whether the phone really supports RAW.
+Version 0.23.0 covers **Stages 1 to 5**, plus camera modes (NORMAL, ASTRO, TRAILS, PANO, DOUBLE and MORE), a **Stacking Studio**, automatic stacking while capturing, storage-saving options and temperature protection. Earlier stages: capability detection, an experimental **long exposure probe**, a live preview with manual controls, and multi-frame capture with a self-timer. A **RAW capture test** checks whether the phone really supports RAW.
 
 | Stage | Scope | State |
 |-------|-------|-------|
@@ -20,11 +20,12 @@ Version 0.22.0 covers **Stages 1 to 5**, plus camera modes (NORMAL, ASTRO, TRAIL
 | 3 | Astrophotography capture mode (single frame, self-timer) | Done |
 | 4 | Multi-frame capture and RAW test | Done |
 | 5 | Image stacking | Done (alignment is translation only) |
-| 6 | Gallery and processing | Planned |
+| 6 | Gallery | Done |
 | 7 | Optimization and device compatibility | Planned |
 
 ## Features
 
+- Gallery of everything you saved, with filters, full-screen viewer, multi-select, share and delete
 - Mode tabs like a phone camera: NORMAL (plain auto camera), ASTRO (manual camera with stacking), TRAILS (interval star trails), PANO (turn the phone to take a stitched panorama), DOUBLE (two photos blended) and MORE (Stacking Studio, Camera Tester, tests)
 - Flash, timer (3, 5, 10 s) and grid overlays from the icon bar
 - Noise reduction for dark scenes: outlier rejection, dark frames, 2×2 night mode and star-preserving denoising

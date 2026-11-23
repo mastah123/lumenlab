@@ -12,6 +12,7 @@ Runs on the JVM, no phone needed. CI runs it before building the APKs.
 |------------|--------|
 | `LongExposurePlanTest` | Exposure path verdict (hardware, stacking, auto boost, none, error), frame plan and SNR gain, brightness check, exposure text |
 | `StackProgressTest` | Time-left text and progress text |
+| `GalleryModelTest` | Gallery folder categories, filters, size and date text |
 | `ControlLimitsTest` | Exposure and ISO slider mapping, clamping, round trip |
 
 Not covered by automated tests: Camera2 capture, stacking, panorama and double exposure image output, sensors, thermal readings, and all UI. Check those by hand.
@@ -24,6 +25,10 @@ Not covered by automated tests: Camera2 capture, stacking, panorama and double e
 - [ ] TRAILS: interval run starts, stops and saves one merged image
 - [ ] PANO: turning the phone takes photos; second shutter press stitches; result saved in Pictures/Lumenlab/PANORAMA; Add photo button on phones without a rotation sensor
 - [ ] DOUBLE: first and second photo (camera and gallery), ghost slider, Blend/Lighten/Silhouette, saved to Pictures/Lumenlab/DOUBLE
+- [ ] Gallery: opens from MORE; thumbnails load; Results hides burst frames and Frames shows them; day headers read Today/Yesterday/date
+- [ ] Gallery viewer: swipe between pictures; share, open in another app and delete work; delete asks first
+- [ ] Gallery selection: long press selects, tapping toggles, share and delete work on several pictures; back or X clears selection
+- [ ] Gallery on Android 9 (if available): pictures listed and shareable
 - [ ] MORE: Stacking Studio, Camera Tester, Phone Check, tests shortcut
 - [ ] Settings: night mode (red), temperature protection, storage options
 - [ ] Long Exposure Test and RAW test run and the report can be shared
