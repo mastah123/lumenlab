@@ -16,8 +16,8 @@ android {
         applicationId = "com.lumenlab.app"
         minSdk = 28
         targetSdk = 34
-        versionCode = 24
-        versionName = "0.20.0"
+        versionCode = 25
+        versionName = "0.21.0"
     }
 
     signingConfigs {
@@ -77,4 +77,6 @@ dependencies {
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.material3:material3")
     implementation("androidx.compose.material:material-icons-extended")
+
+    testImplementation("junit:junit:4.13.2")
 }

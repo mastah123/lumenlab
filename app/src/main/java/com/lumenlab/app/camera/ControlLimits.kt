@@ -2,6 +2,8 @@ package com.lumenlab.app.camera
 
 import kotlin.math.exp
 import kotlin.math.ln
+import kotlin.math.roundToInt
+import kotlin.math.roundToLong
 
 /** What the manual controls may offer for one camera, based on the verified profile. */
 data class ControlLimits(
@@ -50,11 +52,11 @@ private fun logMap(frac: Float, lo: Double, hi: Double): Double =
     if (hi <= lo) lo else exp(ln(lo) + frac.coerceIn(0f, 1f) * (ln(hi) - ln(lo)))
 
 fun ControlLimits.exposureAt(frac: Float): Long =
-    logMap(frac, minExposureNs.toDouble(), maxExposureNs.toDouble()).toLong()
+    logMap(frac, minExposureNs.toDouble(), maxExposureNs.toDouble()).roundToLong()
         .coerceIn(minExposureNs, maxExposureNs)
 
 fun ControlLimits.isoAt(frac: Float): Int =
-    logMap(frac, isoMin.toDouble(), isoMax.toDouble()).toInt().coerceIn(isoMin, isoMax)
+    logMap(frac, isoMin.toDouble(), isoMax.toDouble()).roundToInt().coerceIn(isoMin, isoMax)
 
 fun ControlLimits.isoFraction(iso: Int): Float =
     if (isoMax <= isoMin) 0f

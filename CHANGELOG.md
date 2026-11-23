@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.21.0] - 2026-11-23
+
+### Added
+- Unit tests for the long exposure planner and brightness check, the progress and time-left text, and the manual control limits (`app/src/test`). The build workflow now runs them before building the APKs.
+- `docs/TESTING.md`: how to run the automated tests and a manual checklist for every mode.
+
+### Changed
+- README brought up to date: current version, the NORMAL, ASTRO, TRAILS, PANO, DOUBLE and MORE modes, project structure and testing.
+
+### Fixed
+- The exposure slider could stop 1 ns short of the maximum at its far end, and the ISO slider could stop one step short, because the value was truncated instead of rounded.
+
 ## [0.20.0] - 2026-11-05
 
 ### Added
