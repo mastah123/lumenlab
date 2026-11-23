@@ -36,6 +36,7 @@ data class ManualSettings(
     val focusDiopters: Float,
     val autoFocus: Boolean = false,
     val flash: FlashMode = FlashMode.Off,
+    val lock: Boolean = false,
 )
 
 /** What the camera says it used for a frame. */
@@ -89,6 +90,11 @@ private fun CaptureRequest.Builder.applyControls(s: ManualSettings, forCapture: 
         }
         set(CaptureRequest.CONTROL_AE_MODE, ae)
         set(CaptureRequest.CONTROL_AF_MODE, CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_PICTURE)
+        if (s.lock) {
+            // A panorama needs every frame to share the same exposure and white balance.
+            set(CaptureRequest.CONTROL_AE_LOCK, true)
+            set(CaptureRequest.CONTROL_AWB_LOCK, true)
+        }
     }
     set(
         CaptureRequest.FLASH_MODE,

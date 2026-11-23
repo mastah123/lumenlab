@@ -29,6 +29,7 @@ import com.lumenlab.app.ui.Mode
 import com.lumenlab.app.ui.ModeTabs
 import com.lumenlab.app.ui.MoreScreen
 import com.lumenlab.app.ui.NightTheme
+import com.lumenlab.app.ui.PanoramaScreen
 import com.lumenlab.app.ui.ProbeScreen
 import com.lumenlab.app.ui.RawScreen
 import com.lumenlab.app.ui.SettingsScreen
@@ -90,6 +91,12 @@ private fun LumenlabApp() {
                         tabs = tabs,
                     )
                     Mode.DoubleExp -> DoubleExposureScreen(
+                        limits = limitsForControls,
+                        settings = settings,
+                        onOpenSettings = { screen = Screen.Settings },
+                        tabs = tabs,
+                    )
+                    Mode.Pano -> PanoramaScreen(
                         limits = limitsForControls,
                         settings = settings,
                         onOpenSettings = { screen = Screen.Settings },

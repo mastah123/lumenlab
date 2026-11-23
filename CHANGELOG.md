@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.20.0] - 2026-11-05
+
+### Added
+- Panorama mode, in a new PANO tab. Hold the phone upright, press the shutter and turn slowly. Photos are taken automatically at the right spacing, using the rotation sensor, with exposure and white balance locked. Press the shutter again to finish.
+- Stitching: frames are warped onto a cylinder, placed from the recorded turn, fine-tuned by matching the overlap, and blended with soft seams. The result is saved to Pictures/Lumenlab/PANORAMA and shown as a swipeable strip.
+- Up to 16 photos per panorama, and the picture is kept under about 9000 pixels wide.
+- Phones without a rotation sensor use an Add photo button instead.
+
+### Changed
+- Mode tabs are slightly tighter to fit six tabs.
+
 ## [0.19.0] - 2026-11-05
 
 ### Added
