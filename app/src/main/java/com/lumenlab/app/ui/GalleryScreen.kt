@@ -261,6 +261,7 @@ private fun GalleryCell(
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun GalleryViewer(
     items: List<GalleryItem>,
