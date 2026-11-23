@@ -23,12 +23,15 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.DeleteOutline
 import androidx.compose.material.icons.filled.FlashAuto
 import androidx.compose.material.icons.filled.FlashOff
 import androidx.compose.material.icons.filled.FlashOn
 import androidx.compose.material.icons.filled.GridOff
 import androidx.compose.material.icons.filled.GridOn
-import androidx.compose.material.icons.filled.Highlight
+import androidx.compose.material.icons.filled.FlashlightOn
+import androidx.compose.material.icons.filled.PhotoLibrary
+import androidx.compose.material.icons.filled.Save
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Timer
 import androidx.compose.material3.Icon
@@ -307,7 +310,7 @@ private fun flashIcon(mode: FlashMode): ImageVector = when (mode) {
     FlashMode.Off -> Icons.Filled.FlashOff
     FlashMode.Auto -> Icons.Filled.FlashAuto
     FlashMode.On -> Icons.Filled.FlashOn
-    FlashMode.Torch -> Icons.Filled.Highlight
+    FlashMode.Torch -> Icons.Filled.FlashlightOn
 }
 
 /** Composition guides over the preview: off, thirds, quarters, golden ratio, diagonals. */
@@ -1062,14 +1065,18 @@ private fun AstroContent(
         } else {
             append(" · ≈ ${formatStorage(sizeEach)}")
         }
-        if (settings.timerSeconds > 0) append(" · ${settings.timerSeconds}s timer")
-        if (settings.boost) append(" · boost")
-        if (ms.manual && darkAvailable) append(" · dark ✓")
-        if (settings.nightBin) append(" · 2×2")
+        if (settings.timerSeconds > 0) append(" · timer ${settings.timerSeconds} s")
+        if (settings.boost) append(" · boost on")
+        if (ms.manual && darkAvailable) append(" · dark frame on")
+        if (settings.nightBin) append(" · 2×2 noise cut")
         if (effFrames > 1 && effStack >= 0) {
-            append(" · stack ${StackPlan.short(effStack)}")
+            append(" · stack ${StackPlan.label(effStack).replaceFirstChar { it.lowercase() }}")
             if (settings.liveStacking) append(" (live)")
-            append(if (settings.deleteOriginals) " · delete originals" else " · keep originals")
+            append(when (settings.originals) {
+                OriginalsPolicy.Delete -> " · delete originals"
+                OriginalsPolicy.Keep -> " · keep originals"
+                OriginalsPolicy.Ask -> " · ask about originals"
+            })
         }
     }
 
@@ -1081,7 +1088,7 @@ private fun AstroContent(
     val pxPerSec = pxPerSecond(limits.camera)
     val gapPx = max(0.0, (trailCycleMs - trailK * (ms.exposureNs / 1_000_000L)) / 1000.0 * pxPerSec)
     val trailsDetails = buildString {
-        append("★ $trailShots shots · $trailK frames each · ")
+        append("$trailShots shots · $trailK frames each · ")
         append(if (settings.trailInterval == 0) "continuous" else "every ${settings.trailInterval} s")
         append(" · ${minutesLabel(settings.trailMinutes)}")
         append(" · trails ≈ ${(trailSeconds * pxPerSec).roundToInt()} px")
@@ -1195,8 +1202,8 @@ private fun AstroContent(
                             "Focus", focusText, focusFrac, { focusFrac = it; autoFocus = false }, focusSnaps,
                             "Reported by the phone, not yet verified. Left end is infinity.", at,
                             extra = {
-                                TextButton(onClick = { autoFocus = true }) { Text(if (autoFocus) "● AF" else "AF") }
-                                TextButton(onClick = { autoFocus = false; focusFrac = 0f }) { Text("∞") }
+                                TextButton(onClick = { autoFocus = true }) { Text(if (autoFocus) "● Auto" else "Auto") }
+                                TextButton(onClick = { autoFocus = false; focusFrac = 0f }) { Text("Infinity") }
                             },
                         )
                         Control.Frames -> SliderPanel(
@@ -1222,8 +1229,15 @@ private fun AstroContent(
                             },
                             at,
                             extra = {
-                                TextButton(onClick = { onSettings(settings.copy(deleteOriginals = !settings.deleteOriginals)) }) {
-                                    Text(if (settings.deleteOriginals) "Delete originals" else "Keep originals")
+                                TextButton(onClick = {
+                                    onSettings(settings.copy(deleteOriginals = !settings.deleteOriginals, askOriginals = false))
+                                }) {
+                                    Icon(
+                                        if (settings.deleteOriginals) Icons.Filled.DeleteOutline else Icons.Filled.Save,
+                                        null, Modifier.size(16.dp),
+                                    )
+                                    Spacer(Modifier.width(4.dp))
+                                    Text(if (settings.deleteOriginals) "Delete originals" else "Keep originals", maxLines = 1)
                                 }
                             },
                         )
@@ -1331,9 +1345,9 @@ private fun AstroContent(
                     }
                 },
             )
-            if (mode == Mode.Normal) Spacer(Modifier.width(72.dp)) else StripChip(
-                "MODE", if (ms.manual) "Manual" else "Auto", ms.manual, limits.manualAvailable && !busy,
-                Modifier.width(72.dp),
+            if (mode == Mode.Normal) Spacer(Modifier.width(80.dp)) else StripChip(
+                "CONTROLS", if (ms.manual) "Manual" else "Auto", ms.manual, limits.manualAvailable && !busy,
+                Modifier.width(80.dp),
             ) { manual = !manual }
         }
     }
@@ -1407,9 +1421,10 @@ private fun SliderPanel(
             .padding(horizontal = 14.dp, vertical = 4.dp),
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Text(title, color = colors.onSurfaceVariant, modifier = Modifier.weight(1f))
+            Text(title, color = colors.onSurfaceVariant, maxLines = 1, softWrap = false)
+            Spacer(Modifier.weight(1f))
             extra()
-            Text(valueText, color = colors.onBackground, fontWeight = FontWeight.SemiBold,
+            Text(valueText, color = colors.onBackground, fontWeight = FontWeight.SemiBold, maxLines = 1,
                 modifier = Modifier.padding(start = 8.dp))
         }
         SnapSlider(value = frac, onValueChange = onFrac, snaps = snaps)
@@ -1437,13 +1452,14 @@ private fun StripChip(
             .padding(vertical = 6.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Text(label, style = MaterialTheme.typography.labelSmall, color = colors.onSurfaceVariant)
+        Text(label, style = MaterialTheme.typography.labelSmall, color = colors.onSurfaceVariant, maxLines = 1, softWrap = false)
         Text(
             value,
-            style = MaterialTheme.typography.labelLarge,
+            style = MaterialTheme.typography.labelMedium,
             color = if (enabled) colors.onBackground else colors.outline,
             fontWeight = FontWeight.SemiBold,
             maxLines = 1,
+            softWrap = false,
         )
     }
 }
@@ -1459,6 +1475,8 @@ private fun Thumbnail(bitmap: Bitmap?, onClick: () -> Unit) {
         if (bitmap != null) {
             Image(bitmap = bitmap.asImageBitmap(), contentDescription = "Last capture",
                 modifier = Modifier.fillMaxSize(), contentScale = ContentScale.Crop)
+        } else {
+            Icon(Icons.Filled.PhotoLibrary, "No photo yet", tint = colors.outline)
         }
     }
 }

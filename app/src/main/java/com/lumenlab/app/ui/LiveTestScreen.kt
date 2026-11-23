@@ -69,7 +69,7 @@ fun LiveTestScreen(limits: ControlLimits?, onBack: () -> Unit, onSaved: (LiveTes
         topBar = {
             TopAppBar(
                 title = { Text("Live Stacking Test") },
-                navigationIcon = { TextButton(onClick = onBack) { Text("Back") } },
+                navigationIcon = { BackButton(onBack) },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = colors.background,
                     titleContentColor = colors.onBackground,

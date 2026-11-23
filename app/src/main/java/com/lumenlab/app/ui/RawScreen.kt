@@ -92,7 +92,7 @@ fun RawScreen(
         topBar = {
             TopAppBar(
                 title = { Text("RAW Capture Test") },
-                navigationIcon = { TextButton(onClick = onBack, enabled = !running) { Text("Back") } },
+                navigationIcon = { BackButton(onBack, enabled = !running) },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = colors.background,
                     titleContentColor = colors.onBackground,

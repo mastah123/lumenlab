@@ -2,6 +2,15 @@ package com.lumenlab.app.ui
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Share
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -40,8 +49,42 @@ internal fun buzz(context: android.content.Context, ms: Long = 150) {
 }
 
 @Composable
-internal fun SectionTitle(text: String) {
-    Text(text, fontWeight = FontWeight.SemiBold, modifier = Modifier.padding(top = 8.dp))
+internal fun SectionTitle(text: String, icon: ImageVector? = null) {
+    Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(top = 8.dp)) {
+        if (icon != null) {
+            Icon(icon, null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(20.dp))
+            Spacer(Modifier.width(8.dp))
+        }
+        Text(text, fontWeight = FontWeight.SemiBold)
+    }
+}
+
+/** The back arrow used in every screen's top bar. */
+@Composable
+internal fun BackButton(onClick: () -> Unit, enabled: Boolean = true) {
+    IconButton(onClick = onClick, enabled = enabled) {
+        Icon(Icons.AutoMirrored.Filled.ArrowBack, "Back")
+    }
+}
+
+/** The share icon used in top bars. */
+@Composable
+internal fun ShareButton(onClick: () -> Unit) {
+    IconButton(onClick = onClick) { Icon(Icons.Filled.Share, "Share") }
+}
+
+/** A switch row: title, optional detail, switch on the right. */
+@Composable
+internal fun SwitchRow(title: String, detail: String?, checked: Boolean, onChange: (Boolean) -> Unit) {
+    Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
+        Column(Modifier.weight(1f)) {
+            Text(title)
+            if (detail != null) {
+                Text(detail, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            }
+        }
+        androidx.compose.material3.Switch(checked = checked, onCheckedChange = onChange)
+    }
 }
 
 @Composable

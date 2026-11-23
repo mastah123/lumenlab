@@ -45,11 +45,9 @@ fun TesterScreen(cameras: List<CameraInfo>, profile: DeviceProfile, onBack: () -
         topBar = {
             TopAppBar(
                 title = { Text("Camera Tester") },
-                navigationIcon = { TextButton(onClick = onBack) { Text("Back") } },
+                navigationIcon = { BackButton(onBack) },
                 actions = {
-                    TextButton(onClick = { shareReport(context, buildReport(deviceName(), cameras, profile, Thermal.read(context))) }) {
-                        Text("Share")
-                    }
+                    ShareButton { shareReport(context, buildReport(deviceName(), cameras, profile, Thermal.read(context))) }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = colors.background,

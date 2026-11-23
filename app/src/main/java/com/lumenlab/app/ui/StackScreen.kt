@@ -97,7 +97,7 @@ fun StackScreen(settings: AppSettings, onBack: () -> Unit) {
         topBar = {
             TopAppBar(
                 title = { Text("Stacking Studio") },
-                navigationIcon = { TextButton(onClick = onBack, enabled = !running) { Text("Back") } },
+                navigationIcon = { BackButton(onBack, enabled = !running) },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = colors.background,
                     titleContentColor = colors.onBackground,

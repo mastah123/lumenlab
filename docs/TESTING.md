@@ -28,6 +28,11 @@ Not covered by automated tests: Camera2 capture, stacking, panorama and double e
 - [ ] Settings: night mode (red), temperature protection, storage options
 - [ ] Long Exposure Test and RAW test run and the report can be shared
 - [ ] Temperature chip shows below the settings icon
+- [ ] All six mode tabs fit on one line and are readable
+- [ ] STACK slider panel: title "Stack" on one line, originals button shows an icon and toggles
+- [ ] Settings: sections in order Appearance, Stacking, Safety, Device profile, Tests and experiments, Diagnostics; originals choice (ask/keep/delete) is respected by the next burst
+- [ ] Every top bar has a working back arrow; share icons work on Camera Tester and Long Exposure Test
+- [ ] MORE tiles and "Tests and settings" button open the right screens
 - [ ] Version in Settings matches `versionName` in `app/build.gradle.kts`
 
 ## Version check

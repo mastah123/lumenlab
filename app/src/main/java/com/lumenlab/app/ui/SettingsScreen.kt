@@ -3,18 +3,32 @@ package com.lumenlab.app.ui
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.BugReport
+import androidx.compose.material.icons.filled.DeleteOutline
+import androidx.compose.material.icons.filled.DeviceThermostat
+import androidx.compose.material.icons.filled.Image
+import androidx.compose.material.icons.filled.Layers
+import androidx.compose.material.icons.filled.Palette
+import androidx.compose.material.icons.filled.PhoneAndroid
+import androidx.compose.material.icons.filled.Science
+import androidx.compose.material.icons.filled.Share
+import androidx.compose.material.icons.filled.Timer
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
@@ -66,7 +80,7 @@ fun SettingsScreen(
         topBar = {
             TopAppBar(
                 title = { Text("Settings") },
-                navigationIcon = { TextButton(onClick = onBack) { Text("Back") } },
+                navigationIcon = { BackButton(onBack) },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = colors.background,
                     titleContentColor = colors.onBackground,
@@ -78,105 +92,44 @@ fun SettingsScreen(
             modifier = Modifier.padding(padding).padding(16.dp).verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
+            SectionTitle("Appearance", Icons.Filled.Palette)
             SettingsCard {
-                Text("Lumenlab", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+                SwitchRow("Red night-vision mode", "Red-only interface that protects your night vision",
+                    settings.redMode) { onSettings(settings.copy(redMode = it)) }
+            }
+
+            SectionTitle("Stacking", Icons.Filled.Layers)
+            SettingsCard {
+                SwitchRow("Night noise reduction (2×2)",
+                    "Combines four pixels into one. Halves the picture size and cuts noise about 2×",
+                    settings.nightBin) { onSettings(settings.copy(nightBin = it)) }
                 Text(
-                    "Version ${profile.appVersion.ifEmpty { "unknown" }} (build ${appBuild(context)})",
-                    style = MaterialTheme.typography.bodyLarge,
+                    "How often to stack is set with the STACK slider on the camera screen.",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = colors.onSurfaceVariant,
                 )
-            }
-
-            SectionTitle("Appearance")
-            SettingsCard {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text("Red night-vision mode", modifier = Modifier.weight(1f))
-                    Switch(checked = settings.redMode, onCheckedChange = { onSettings(settings.copy(redMode = it)) })
-                }
-            }
-
-            SectionTitle("Stack while capturing")
-            SettingsCard {
-                Text("Current: ${StackPlan.label(settings.stackBatch)}", color = colors.onSurfaceVariant)
-                StackPlan.presets.forEach { batch ->
+                Text("Original frames after stacking", fontWeight = FontWeight.SemiBold, modifier = Modifier.padding(top = 8.dp))
+                OriginalsPolicy.values().forEach { policy ->
                     OptionRow(
-                        selected = settings.stackBatch == batch,
-                        title = StackPlan.label(batch),
-                        detail = when {
-                            batch < 0 -> "Frames are only saved"
-                            batch == 0 -> "Stack once, after the last frame"
-                            else -> "Stack each batch, then keep shooting. Batches are combined at the end"
-                        },
-                    ) { onSettings(settings.copy(stackBatch = batch)) }
-                }
-                Text(
-                    "Other batch sizes are on the camera screen's STACK slider.",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = colors.onSurfaceVariant,
-                )
-                Text(
-                    "Stacking always lines up the stars and averages. Star trails are made from Star Trails on Home. " +
-                        "Brightness boost is on the camera screen, over the live preview.",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = colors.onSurfaceVariant,
-                    modifier = Modifier.padding(top = 8.dp),
-                )
-                Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(top = 8.dp)) {
-                    Column(Modifier.weight(1f)) {
-                        Text("Night noise reduction (2×2)")
-                        Text(
-                            "Combines four pixels into one. Halves the picture size and cuts noise about 2×",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = colors.onSurfaceVariant,
+                        selected = settings.originals == policy,
+                        title = policy.label,
+                        detail = policy.detail,
+                    ) {
+                        onSettings(
+                            settings.copy(
+                                deleteOriginals = policy == OriginalsPolicy.Delete,
+                                askOriginals = policy == OriginalsPolicy.Ask,
+                            )
                         )
                     }
-                    Switch(checked = settings.nightBin, onCheckedChange = { onSettings(settings.copy(nightBin = it)) })
                 }
             }
 
-            SectionTitle("Original frames after stacking")
+            SectionTitle("Safety", Icons.Filled.DeviceThermostat)
             SettingsCard {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Column(Modifier.weight(1f)) {
-                        Text("Delete originals after stacking")
-                        Text(
-                            if (settings.deleteOriginals) "Originals are deleted once the stacked image is saved and checked"
-                            else "Originals stay in the gallery",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = colors.onSurfaceVariant,
-                        )
-                    }
-                    Switch(
-                        checked = settings.deleteOriginals,
-                        onCheckedChange = { onSettings(settings.copy(deleteOriginals = it)) },
-                    )
-                }
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Column(Modifier.weight(1f)) {
-                        Text("Ask each time")
-                        Text("A dialog appears when a stacked burst starts", style = MaterialTheme.typography.bodySmall,
-                            color = colors.onSurfaceVariant)
-                    }
-                    Switch(
-                        checked = settings.askOriginals,
-                        onCheckedChange = { onSettings(settings.copy(askOriginals = it)) },
-                    )
-                }
-            }
-
-            SectionTitle("Safety")
-            SettingsCard {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Column(Modifier.weight(1f)) {
-                        Text("Temperature protection")
-                        Text("Warns, pauses and stops a burst before the phone overheats",
-                            style = MaterialTheme.typography.bodySmall, color = colors.onSurfaceVariant)
-                    }
-                    Switch(
-                        checked = settings.tempProtection,
-                        onCheckedChange = { on ->
-                            if (on) onSettings(settings.copy(tempProtection = true)) else confirmProtectionOff = true
-                        },
-                    )
+                SwitchRow("Temperature protection", "Warns, pauses and stops a burst before the phone overheats",
+                    settings.tempProtection) { on ->
+                    if (on) onSettings(settings.copy(tempProtection = true)) else confirmProtectionOff = true
                 }
                 if (settings.tempProtection) {
                     TempPreset.values().forEach { preset ->
@@ -189,7 +142,7 @@ fun SettingsScreen(
                 }
             }
 
-            SectionTitle("Device profile")
+            SectionTitle("Device profile", Icons.Filled.PhoneAndroid)
             SettingsCard {
                 Text(profile.device, color = colors.onSurfaceVariant)
                 profile.cameras.forEach { c ->
@@ -207,44 +160,43 @@ fun SettingsScreen(
                     OutlinedButton(
                         onClick = { shareReport(context, profile.toJson(), "Lumenlab device profile") },
                         modifier = Modifier.weight(1f),
-                    ) { Text("Share profile") }
+                    ) {
+                        Icon(Icons.Filled.Share, null, Modifier.size(18.dp))
+                        Spacer(Modifier.width(6.dp))
+                        Text("Share profile")
+                    }
                     OutlinedButton(
                         onClick = { if (confirmReset) { onResetProfile(); confirmReset = false } else confirmReset = true },
                         modifier = Modifier.weight(1f),
-                    ) { Text(if (confirmReset) "Tap to confirm" else "Reset limits") }
+                    ) { Text(if (confirmReset) "Tap to confirm" else "Reset profile") }
                 }
             }
 
-            SectionTitle("Experimental")
+            SectionTitle("Tests and experiments", Icons.Filled.Science)
             SettingsCard {
                 Text(
-                    "These tools push the camera hardware to its limits. Results vary by phone and tests can be slow.",
+                    "These tests push the camera hardware to its limits. Results vary by phone and some are slow.",
                     color = colors.onSurfaceVariant,
                 )
-                OutlinedButton(onClick = onOpenProbe, modifier = Modifier.fillMaxWidth()) { Text("Long Exposure Test") }
-                OutlinedButton(onClick = onOpenRaw, modifier = Modifier.fillMaxWidth()) { Text("RAW Capture Test") }
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Column(Modifier.weight(1f)) {
-                        Text("Live stacking")
-                        Text(
-                            "Stack each frame as it arrives instead of in batches. Heavy on memory and heat",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = colors.onSurfaceVariant,
-                        )
-                    }
-                    Switch(
-                        checked = settings.liveStacking,
-                        onCheckedChange = { onSettings(settings.copy(liveStacking = it)) },
-                    )
+                OutlinedButton(onClick = onOpenProbe, modifier = Modifier.fillMaxWidth()) {
+                    Icon(Icons.Filled.Timer, null, Modifier.size(18.dp)); Spacer(Modifier.width(8.dp)); Text("Long exposure test")
                 }
-                OutlinedButton(onClick = onOpenLive, modifier = Modifier.fillMaxWidth()) { Text("Live Stacking Test") }
+                OutlinedButton(onClick = onOpenRaw, modifier = Modifier.fillMaxWidth()) {
+                    Icon(Icons.Filled.Image, null, Modifier.size(18.dp)); Spacer(Modifier.width(8.dp)); Text("RAW capture test")
+                }
+                OutlinedButton(onClick = onOpenLive, modifier = Modifier.fillMaxWidth()) {
+                    Icon(Icons.Filled.Layers, null, Modifier.size(18.dp)); Spacer(Modifier.width(8.dp)); Text("Live stacking test")
+                }
+                SwitchRow("Live stacking (experimental)",
+                    "Stack each frame as it arrives instead of in batches. Heavy on memory and heat",
+                    settings.liveStacking) { onSettings(settings.copy(liveStacking = it)) }
             }
 
-            SectionTitle("Diagnostics")
+            SectionTitle("Diagnostics", Icons.Filled.BugReport)
             SettingsCard {
                 Text(Thermal.summary(thermal), style = MaterialTheme.typography.bodyMedium)
                 Text(
-                    if (crash == null) "Last crash: none recorded" else "Last crash: recorded. Share it so it can be fixed.",
+                    if (crash == null) "No crash recorded" else "A crash was recorded. Share the log so it can be fixed.",
                     color = colors.onSurfaceVariant,
                     modifier = Modifier.padding(top = 4.dp),
                 )
@@ -253,14 +205,29 @@ fun SettingsScreen(
                         onClick = { crash?.let { shareReport(context, it, "Lumenlab crash log") } },
                         enabled = crash != null,
                         modifier = Modifier.weight(1f),
-                    ) { Text("Share last crash") }
+                    ) {
+                        Icon(Icons.Filled.Share, null, Modifier.size(18.dp))
+                        Spacer(Modifier.width(6.dp))
+                        Text("Share log")
+                    }
                     OutlinedButton(
                         onClick = { CrashLog.clear(context); crash = null },
                         enabled = crash != null,
                         modifier = Modifier.weight(1f),
-                    ) { Text("Clear") }
+                    ) {
+                        Icon(Icons.Filled.DeleteOutline, null, Modifier.size(18.dp))
+                        Spacer(Modifier.width(6.dp))
+                        Text("Clear log")
+                    }
                 }
             }
+
+            Text(
+                "Lumenlab ${profile.appVersion.ifEmpty { "unknown" }} (build ${appBuild(context)})",
+                style = MaterialTheme.typography.bodySmall,
+                color = colors.onSurfaceVariant,
+                modifier = Modifier.padding(vertical = 8.dp).fillMaxWidth(),
+            )
         }
     }
 

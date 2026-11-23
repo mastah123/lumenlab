@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.22.0] - 2026-11-23
+
+### Changed
+- Slider panels over the preview no longer squash the title when a button is shown: the "Stack" title was drawn one letter per line. Titles and values stay on one line.
+- Mode tabs share the width equally, so all six fit on narrow phones. Strip chip labels and values stay on one line.
+- The MODE chip next to the shutter is now CONTROLS (Manual or Auto), so it is not confused with the mode tabs.
+- Icons instead of text or symbols: back arrow and share icon in every top bar, settings icon and tile icons in MORE, section icons in Settings, torch icon, a photo icon in the empty thumbnail, and icons on test, share, clear and originals buttons.
+- Settings regrouped: Appearance, Stacking, Safety, Device profile, Tests and experiments, Diagnostics. The app version is shown once, at the bottom.
+- Wording made consistent: "Tests and experiments", "Long exposure test", "RAW capture test", "Live stacking test", "Share log" and "Clear log", "Reset profile", focus buttons "Auto" and "Infinity". The details line reads "timer 10 s", "2×2 noise cut", "dark frame on", "stack every 5 frames".
+
+### Removed
+- The Settings list of stack batch sizes and its leftover notes (the STACK slider on the camera screen does this). The unneeded Lumenlab title card in Settings.
+- The two overlapping switches "Delete originals" and "Ask each time" in Settings, replaced by one choice of Ask each time, Always keep or Always delete. The Delete/Keep button on the STACK slider also turns off Ask.
+
 ## [0.21.0] - 2026-11-23
 
 ### Added

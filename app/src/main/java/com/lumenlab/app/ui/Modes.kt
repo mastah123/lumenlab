@@ -32,19 +32,21 @@ enum class Mode(val label: String) {
 fun ModeTabs(mode: Mode, onMode: (Mode) -> Unit, enabled: Boolean = true) {
     val colors = MaterialTheme.colorScheme
     Row(
-        modifier = Modifier.fillMaxWidth().padding(vertical = 2.dp),
+        modifier = Modifier.fillMaxWidth().padding(horizontal = 4.dp, vertical = 2.dp),
         horizontalArrangement = Arrangement.SpaceEvenly,
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Mode.values().forEach { m ->
             val selected = m == mode
             Column(
-                modifier = Modifier.clickable(enabled = enabled) { onMode(m) }.padding(horizontal = 6.dp, vertical = 6.dp),
+                modifier = Modifier.weight(1f).clickable(enabled = enabled) { onMode(m) }.padding(vertical = 6.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 Text(
                     m.label,
-                    style = MaterialTheme.typography.labelLarge,
+                    style = MaterialTheme.typography.labelMedium,
+                    maxLines = 1,
+                    softWrap = false,
                     fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal,
                     color = if (selected) colors.primary else if (enabled) colors.onSurfaceVariant else colors.outline,
                 )

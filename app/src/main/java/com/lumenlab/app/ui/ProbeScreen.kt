@@ -113,12 +113,10 @@ fun ProbeScreen(cameras: List<CameraInfo>, onBack: () -> Unit, onSaved: (Map<Str
         topBar = {
             TopAppBar(
                 title = { Text("Long Exposure Test") },
-                navigationIcon = { TextButton(onClick = onBack, enabled = !running) { Text("Back") } },
+                navigationIcon = { BackButton(onBack, enabled = !running) },
                 actions = {
                     if (results.isNotEmpty()) {
-                        TextButton(onClick = { shareReport(context, probeReport(deviceName(), results)) }) {
-                            Text("Share")
-                        }
+                        ShareButton { shareReport(context, probeReport(deviceName(), results)) }
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(

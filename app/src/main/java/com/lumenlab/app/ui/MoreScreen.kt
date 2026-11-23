@@ -4,9 +4,20 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Layers
+import androidx.compose.material.icons.filled.PhotoCamera
+import androidx.compose.material.icons.filled.Science
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
@@ -16,7 +27,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -81,29 +91,31 @@ fun MoreScreen(
                             color = colors.onSurfaceVariant)
                     }
                     Column(horizontalAlignment = Alignment.End) {
-                        TextButton(onClick = onOpenSettings) { Text("⚙ Settings") }
+                        IconButton(onClick = onOpenSettings) { Icon(Icons.Filled.Settings, "Settings") }
                         TempChip(thermal, Thermal.level(thermal, settings.tempPreset)) {}
                     }
                 }
 
                 Tile(
-                    "▣", "Stacking Studio",
-                    if (captures == 0) "Manual stacking. No captures yet" else
-                        "Manual stacking. $captures capture${if (captures == 1) "" else "s"} ready",
+                    Icons.Filled.Layers, "Stacking Studio",
+                    if (captures == 0) "Stack saved frames by hand. No captures yet" else
+                        "Stack saved frames by hand. $captures capture${if (captures == 1) "" else "s"} ready",
                     Modifier.fillMaxWidth(), cardColors, onOpenStack,
                 )
-                Tile("◎", "Camera Tester", "Every camera, its limits and what it really does",
+                Tile(Icons.Filled.PhotoCamera, "Camera Tester", "Every camera, its limits and what it can really do",
                     Modifier.fillMaxWidth(), cardColors, onOpenTester)
 
                 Card(modifier = Modifier.fillMaxWidth(), colors = cardColors) {
                     Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                        Text("PHONE CHECK", style = MaterialTheme.typography.labelSmall, color = colors.onSurfaceVariant)
+                        Text("Phone check", style = MaterialTheme.typography.labelSmall, color = colors.onSurfaceVariant)
                         StatusRow("Manual control", readiness.title)
                         StatusRow("Exposure", best?.describe() ?: "Not tested")
                         StatusRow("RAW capture", rawText)
                         StatusRow("Live stacking", profile.liveTest?.verdict ?: "Not tested")
                         OutlinedButton(onClick = onOpenSettings, modifier = Modifier.fillMaxWidth().padding(top = 6.dp)) {
-                            Text("Run tests")
+                            Icon(Icons.Filled.Science, null, Modifier.size(18.dp))
+                            Spacer(Modifier.width(8.dp))
+                            Text("Tests and settings")
                         }
                     }
                 }
@@ -115,7 +127,7 @@ fun MoreScreen(
 
 @Composable
 private fun Tile(
-    glyph: String,
+    icon: ImageVector,
     title: String,
     status: String,
     modifier: Modifier,
@@ -124,7 +136,7 @@ private fun Tile(
 ) {
     Card(modifier = modifier.clickable(onClick = onClick), colors = cardColors) {
         Row(Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(14.dp)) {
-            Text(glyph, style = MaterialTheme.typography.headlineSmall)
+            Icon(icon, null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(28.dp))
             Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
                 Text(title, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
                 Text(status, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
