@@ -18,6 +18,8 @@ class GalleryModelTest {
         assertEquals(GalleryCategory.Frames, galleryCategory("Lumenlab/STACKED/BATCHES"))
         assertEquals(GalleryCategory.Panorama, galleryCategory("Lumenlab/PANORAMA"))
         assertEquals(GalleryCategory.Blend, galleryCategory("Lumenlab/DOUBLE"))
+        assertEquals(GalleryCategory.SuperRes, galleryCategory("Lumenlab/SUPERRES"))
+        assertEquals(GalleryCategory.FocusStack, galleryCategory("Lumenlab/FOCUS"))
         assertEquals(GalleryCategory.Frames, galleryCategory("Lumenlab/SESSION_20261123_140000"))
         assertEquals(GalleryCategory.Other, galleryCategory("Lumenlab/RAW_TEST"))
         assertEquals(GalleryCategory.Other, galleryCategory("Camera"))
@@ -28,9 +30,9 @@ class GalleryModelTest {
     fun resultsFilterHidesFramesAndOther() {
         val list = listOf(
             item("Lumenlab"), item("Lumenlab/STACKED"), item("Lumenlab/PANORAMA"), item("Lumenlab/DOUBLE"),
-            item("Lumenlab/SESSION_1"), item("Lumenlab/RAW_TEST"),
+            item("Lumenlab/SESSION_1"), item("Lumenlab/RAW_TEST"), item("Lumenlab/SUPERRES"), item("Lumenlab/FOCUS"),
         )
-        assertEquals(4, list.filtered(GalleryFilter.Results).size)
+        assertEquals(6, list.filtered(GalleryFilter.Results).size)
         assertEquals(1, list.filtered(GalleryFilter.Frames).size)
         assertEquals(1, list.filtered(GalleryFilter.Other).size)
         assertEquals(1, list.filtered(GalleryFilter.Blend).size)

@@ -7,6 +7,36 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.26.0] - 2026-11-24
+
+### Added
+- FOCUS mode (focus stacking). Put the phone on a support, aim at something close and press the shutter. The app reads the exposure the camera chose, fixes it, then moves the focus from the nearest distance toward far while it takes 8, 12 or 16 photos. The photos are lined up to the middle one and merged, taking each part from the photo where it is sharpest. Range chips Close, Wide and Full choose how far the focus travels, with the distances shown. The result is saved to Pictures/Lumenlab/FOCUS and listed in the gallery under Results and a new Focus chip.
+- Unit tests for the focus steps, the merge (sharp halves of two photos combine into one sharp picture), flat areas, shifting and the detail measure.
+
+### Changed
+- The mode tabs now scroll sideways and keep the chosen tab in view, because eight tabs no longer fit.
+- Photos taken with manual exposure can now lock white balance too, so colours match across a burst.
+
+### Notes
+- Needs a camera that can move focus by hand. Otherwise the mode says so and the shutter is off.
+- Photos are read at about 2000 pixels on the long side to keep memory safe.
+- Only shifting is corrected. Focusing changes the picture's size a little on some phones, which can leave soft edges around objects. A support helps a lot.
+
+## [0.25.0] - 2026-11-24
+
+### Added
+- SUPER mode (super resolution). Hold the phone in your hands and press the shutter. It takes 6, 8 or 10 photos with exposure and white balance locked, lines them up to the sharpest one (to a fraction of a pixel), and drops every pixel onto a grid twice as fine. The tiny shake of your hands is what adds the extra detail, so do not use a tripod. Photos that do not line up are left out. A light sharpening step follows. The result is saved to Pictures/Lumenlab/SUPERRES and shown in the gallery under Results and a new Super res chip.
+- Unit tests for the alignment (sub-pixel shift, rejecting unrelated photos), the merge (it must beat a single upscaled photo), the sharpness score and the gallery's new category.
+
+### Changed
+- Mode tabs use a slightly smaller font so seven tabs fit.
+- Settings icon on the PANO and DOUBLE screens, like the other screens.
+
+### Notes
+- The photos are read at about 2000 pixels on the long side, so the result is about 4000 × 3000 on a 12 MP phone. Expect less noise and some recovered detail, not a true 4×.
+- Aligning and merging takes tens of seconds on a phone.
+- Shift only: photos that turned or moved a lot are skipped.
+
 ## [0.24.0] - 2026-11-23
 
 ### Added

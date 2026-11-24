@@ -1,6 +1,15 @@
 package com.lumenlab.app.ui
 
 import androidx.compose.foundation.background
+import androidx.compose.ui.layout.positionInParent
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.mutableStateMapOf
+import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -25,21 +34,36 @@ enum class Mode(val label: String) {
     Trails("TRAILS"),
     DoubleExp("DOUBLE"),
     Pano("PANO"),
+    Super("SUPER"),
+    Focus("FOCUS"),
     More("MORE"),
 }
+
+/** Remembers where the tabs were scrolled to, because each mode has its own screen and its own copy of the tabs. */
+private var lastTabScroll = 0
 
 @Composable
 fun ModeTabs(mode: Mode, onMode: (Mode) -> Unit, enabled: Boolean = true) {
     val colors = MaterialTheme.colorScheme
+    val scroll = rememberScrollState(lastTabScroll)
+    val offsets = remember { mutableStateMapOf<Mode, Int>() }
+    SideEffect { lastTabScroll = scroll.value }
+    LaunchedEffect(mode, offsets.size) {
+        val x = offsets[mode] ?: return@LaunchedEffect
+        scroll.animateScrollTo((x - 120).coerceAtLeast(0))
+    }
     Row(
-        modifier = Modifier.fillMaxWidth().padding(horizontal = 4.dp, vertical = 2.dp),
-        horizontalArrangement = Arrangement.SpaceEvenly,
+        modifier = Modifier.fillMaxWidth().horizontalScroll(scroll).padding(horizontal = 4.dp, vertical = 2.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Mode.values().forEach { m ->
             val selected = m == mode
             Column(
-                modifier = Modifier.weight(1f).clickable(enabled = enabled) { onMode(m) }.padding(vertical = 6.dp),
+                modifier = Modifier
+                    .widthIn(min = 56.dp)
+                    .onGloballyPositioned { offsets[m] = it.positionInParent().x.toInt() }
+                    .clickable(enabled = enabled) { onMode(m) }
+                    .padding(horizontal = 10.dp, vertical = 6.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 Text(

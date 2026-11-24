@@ -12,6 +12,8 @@ Runs on the JVM, no phone needed. CI runs it before building the APKs.
 |------------|--------|
 | `LongExposurePlanTest` | Exposure path verdict (hardware, stacking, auto boost, none, error), frame plan and SNR gain, brightness check, exposure text |
 | `StackProgressTest` | Time-left text and progress text |
+| `FocusStackTest` | Focus steps, merge takes the sharp parts, flat areas, shifting, detail measure |
+| `SuperResTest` | Sub-pixel photo alignment, rejecting unrelated photos, merge beats single upscale, sharpness score |
 | `StarExposureTest` | NPF and 500 rule, pixel size, clamping, exposure slider reverse mapping, focus sharpness measure |
 | `GalleryModelTest` | Gallery folder categories, filters, size and date text |
 | `ControlLimitsTest` | Exposure and ISO slider mapping, clamping, round trip |
@@ -32,6 +34,10 @@ Not covered by automated tests: Camera2 capture, stacking, panorama and double e
 - [ ] Gallery viewer: swipe between pictures; share, open in another app and delete work; delete asks first
 - [ ] Gallery selection: long press selects, tapping toggles, share and delete work on several pictures; back or X clears selection
 - [ ] Gallery on Android 9 (if available): pictures listed and shareable
+- [ ] SUPER: preview opens; choose 6, 8 or 10 photos; shutter takes the photos with a progress bar; merge shows progress; result saves to Pictures/Lumenlab/SUPERRES and appears in the Gallery (Results and Super res); compare against one normal photo of the same scene at 100% zoom
+- [ ] SUPER on a tripod or a table: the message about too few usable photos or no gain is acceptable; handheld gives the best result
+- [ ] FOCUS: on a phone with manual focus, shutter moves focus from near to far while taking photos; result saves to Pictures/Lumenlab/FOCUS; check that near and far objects are both sharp; Range chips change the distances shown; on a phone without manual focus the mode says so
+- [ ] Mode tabs scroll sideways and the selected tab stays in view after switching mode
 - [ ] MORE: Stacking Studio, Camera Tester, Phone Check, tests shortcut
 - [ ] Settings: night mode (red), temperature protection, storage options
 - [ ] Long Exposure Test and RAW test run and the report can be shared

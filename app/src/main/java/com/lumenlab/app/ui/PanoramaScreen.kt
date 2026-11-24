@@ -31,6 +31,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -288,7 +292,7 @@ private fun PanoContent(
                 )
             }
             Column(horizontalAlignment = Alignment.End) {
-                TextButton(onClick = onOpenSettings, enabled = phase != PanoPhase.Capturing) { Text("⚙ Settings") }
+                IconButton(onClick = onOpenSettings, enabled = phase != PanoPhase.Capturing) { Icon(Icons.Filled.Settings, "Settings") }
                 TempChip(thermal, level) {}
             }
         }

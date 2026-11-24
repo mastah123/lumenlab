@@ -75,6 +75,7 @@ private fun CaptureRequest.Builder.applyControls(s: ManualSettings, forCapture: 
         set(CaptureRequest.SENSOR_EXPOSURE_TIME, s.exposureNs)
         set(CaptureRequest.SENSOR_SENSITIVITY, s.iso)
         set(CaptureRequest.SENSOR_FRAME_DURATION, maxOf(s.exposureNs, 33_333_333L))
+        if (s.lock) set(CaptureRequest.CONTROL_AWB_LOCK, true)
         if (s.autoFocus) {
             set(CaptureRequest.CONTROL_AF_MODE, CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_PICTURE)
         } else {

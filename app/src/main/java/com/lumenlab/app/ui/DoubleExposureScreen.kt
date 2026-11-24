@@ -26,6 +26,10 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Slider
@@ -318,7 +322,7 @@ private fun DoubleContent(
                 )
             }
             Column(horizontalAlignment = Alignment.End) {
-                TextButton(onClick = onOpenSettings, enabled = !busy) { Text("⚙ Settings") }
+                IconButton(onClick = onOpenSettings, enabled = !busy) { Icon(Icons.Filled.Settings, "Settings") }
                 TempChip(thermal, level) {}
             }
         }
