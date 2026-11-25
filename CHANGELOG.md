@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.29.0] - 2026-11-25
+
+### Added
+- NIGHT mode (night handheld). Hold the phone, press the shutter, and 8, 12 or 16 short photos are taken. The app reads the exposure the camera chose and shortens it to the Shutter chip (1/30, 1/15 or 1/8 s), raising ISO to make up the light; if ISO runs out the result is brightened by the missing amount (up to 4x). The sharpest photo becomes the reference, clearly blurrier photos are dropped, the rest are lined up to it and averaged. Parts that moved between photos are taken from the reference only, so people and leaves do not ghost. Saved to Pictures/Lumenlab/NIGHT and listed in the gallery under Results and a new Night chip. The shutter button stops the burst early once 3 photos are taken.
+- Unit tests for noise averaging, moved parts staying out of the result, brightening, the exposure plan (time, ISO, gain, bright scenes) and reference and blur choice.
+
+### Notes
+- Needs manual exposure support; otherwise the mode says it is not available.
+- The result is about 3 MP. Alignment corrects shift only, with no rotation.
+- Very dark scenes get brighter but not noise-free; a support still beats hands.
+
 ## [0.28.0] - 2026-11-25
 
 ### Added

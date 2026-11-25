@@ -37,6 +37,7 @@ enum class Mode(val label: String) {
     Super("SUPER"),
     Focus("FOCUS"),
     Hdr("HDR"),
+    Night("NIGHT"),
     More("MORE"),
 }
 

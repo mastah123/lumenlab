@@ -21,6 +21,7 @@ class GalleryModelTest {
         assertEquals(GalleryCategory.SuperRes, galleryCategory("Lumenlab/SUPERRES"))
         assertEquals(GalleryCategory.FocusStack, galleryCategory("Lumenlab/FOCUS"))
         assertEquals(GalleryCategory.Hdr, galleryCategory("Lumenlab/HDR"))
+        assertEquals(GalleryCategory.Night, galleryCategory("Lumenlab/NIGHT"))
         assertEquals(GalleryCategory.Frames, galleryCategory("Lumenlab/SESSION_20261123_140000"))
         assertEquals(GalleryCategory.Other, galleryCategory("Lumenlab/RAW_TEST"))
         assertEquals(GalleryCategory.Other, galleryCategory("Camera"))
