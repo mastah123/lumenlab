@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.30.0] - 2026-11-25
+
+### Added
+- MOON mode. Aim at the Moon, lean the phone on something, choose its phase (Full, Gibbous, Quarter, Crescent) and press the shutter. The camera's own metering is fooled by the dark sky, so the exposure is set by hand from the phase at the lowest ISO, with Darker/Normal/Brighter (1 EV) chips, and focus is set to infinity. 8, 12 or 16 photos are taken. The Moon is found in each photo (the largest bright area, so a street lamp is ignored), each photo is cropped around it at full resolution and centred to a fraction of a pixel, the sharpest 60% are kept and averaged, then the black point is set to the sky level, the range is stretched and the picture is sharpened. Saved to Pictures/Lumenlab/MOON, listed in the gallery under Results and a new Moon chip. The shutter button stops the burst early once 3 photos are taken.
+- Unit tests for finding the Moon (and ignoring a lamp, and an empty sky), the crop window and its offset, choosing the sharpest photos, the exposure by phase and brightness, and the finishing stretch.
+
+### Notes
+- The result is a square crop around the Moon, not the whole frame. How big it is depends on the lens: a wide lens gives a small Moon. There is no zoom control yet, so the longest lens the app can use gives the best result.
+- The phase exposures are rough starting points; use the Brightness chips if the Moon looks grey or burnt out.
+- Needs manual exposure support; otherwise the mode says it is not available.
+
 ## [0.29.0] - 2026-11-25
 
 ### Added

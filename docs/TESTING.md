@@ -13,6 +13,7 @@ Runs on the JVM, no phone needed. CI runs it before building the APKs.
 | `LongExposurePlanTest` | Exposure path verdict (hardware, stacking, auto boost, none, error), frame plan and SNR gain, brightness check, exposure text |
 | `StackProgressTest` | Time-left text and progress text |
 | `StarAlignTest` | Star matching with shift and turn, large turn search, resampling, edge margins |
+| `MoonModelTest` | Finding the Moon, crop window, sharpest photos, exposure by phase, finishing stretch |
 | `NightMergeTest` | Night burst plan (time, ISO, gain), noise averaging, moved parts ignored, brightening, reference and blur choice |
 | `HdrFusionTest` | Bracket exposure plan, exposure fusion keeps dark and bright detail, single photo unchanged, weights, layer sizes, brightness normalising |
 | `FocusStackTest` | Focus steps, merge takes the sharp parts, flat areas, shifting, detail measure |
@@ -44,6 +45,7 @@ Not covered by automated tests: Camera2 capture, stacking, panorama and double e
 - [ ] FOCUS: on a phone with manual focus, shutter moves focus from near to far while taking photos; result saves to Pictures/Lumenlab/FOCUS; check that near and far objects are both sharp; Range chips change the distances shown; on a phone without manual focus the mode says so
 - [ ] HDR: on a support, shutter takes 3 (or 5) photos at different brightness with a progress bar; blend shows progress; result saves to Pictures/Lumenlab/HDR and appears in the Gallery (Results and HDR); compare against the normal photo of a window scene or backlit subject; Strength chips change the spread; on a phone without manual exposure the mode says so
 - [ ] NIGHT: in a dim room, handheld, shutter takes 8/12/16 photos with a progress bar and a second press stops early after 3; merge shows progress; result saves to Pictures/Lumenlab/NIGHT and appears in the Gallery (Results and Night); compare with one normal night photo for noise and sharpness; Shutter chips change the exposure; a person walking through the scene must not ghost; phone without manual exposure says so
+- [ ] MOON: aim at the Moon on a support; Phase and Brightness chips change the exposure; shutter takes 8/12/16 photos, a second press stops early after 3; result is a square crop around the Moon, saved to Pictures/Lumenlab/MOON and listed in the Gallery (Results and Moon); the Moon is neither grey nor burnt out at Normal for the right phase; with no Moon in view the message says so; phone without manual exposure says so
 - [ ] Mode tabs scroll sideways and the selected tab stays in view after switching mode
 - [ ] MORE: Stacking Studio, Camera Tester, Phone Check, tests shortcut
 - [ ] Settings: night mode (red), temperature protection, storage options
