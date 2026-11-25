@@ -10,7 +10,7 @@ Lumenlab does not assume every phone is the same. It inspects the device through
 
 ## Status
 
-Version 0.27.0 covers **Stages 1 to 5**, plus camera modes (NORMAL, ASTRO, TRAILS, DOUBLE, PANO, SUPER, FOCUS and MORE), a **Stacking Studio**, automatic stacking while capturing, storage-saving options and temperature protection. Earlier stages: capability detection, an experimental **long exposure probe**, a live preview with manual controls, and multi-frame capture with a self-timer. A **RAW capture test** checks whether the phone really supports RAW.
+Version 0.28.0 covers **Stages 1 to 5**, plus camera modes (NORMAL, ASTRO, TRAILS, DOUBLE, PANO, SUPER, FOCUS, HDR and MORE), a **Stacking Studio**, automatic stacking while capturing, storage-saving options and temperature protection. Earlier stages: capability detection, an experimental **long exposure probe**, a live preview with manual controls, and multi-frame capture with a self-timer. A **RAW capture test** checks whether the phone really supports RAW.
 
 | Stage | Scope | State |
 |-------|-------|-------|
@@ -28,7 +28,7 @@ Version 0.27.0 covers **Stages 1 to 5**, plus camera modes (NORMAL, ASTRO, TRAIL
 - Star alignment that follows the sky's rotation as well as the shift (Settings: Correct sky rotation)
 - Star exposure helper (NPF and 500 rule) and a focus assist sharpness meter
 - Gallery of everything you saved, with filters, full-screen viewer, multi-select, share and delete
-- Mode tabs like a phone camera: NORMAL (plain auto camera), ASTRO (manual camera with stacking), TRAILS (interval star trails), PANO (turn the phone to take a stitched panorama), SUPER (a burst of handheld photos merged into a finer picture), FOCUS (focus stacking for everything sharp), DOUBLE (two photos blended) and MORE (Stacking Studio, Camera Tester, tests)
+- Mode tabs like a phone camera: NORMAL (plain auto camera), ASTRO (manual camera with stacking), TRAILS (interval star trails), PANO (turn the phone to take a stitched panorama), SUPER (a burst of handheld photos merged into a finer picture), FOCUS (focus stacking for everything sharp), HDR (darker and brighter photos blended so shadows and highlights keep detail), DOUBLE (two photos blended) and MORE (Stacking Studio, Camera Tester, tests)
 - Flash, timer (3, 5, 10 s) and grid overlays from the icon bar
 - Noise reduction for dark scenes: outlier rejection, dark frames, 2×2 night mode and star-preserving denoising
 - Interval Star Trails: timed shots merged into one image, for sessions up to 4 hours without capturing continuously

@@ -27,6 +27,7 @@ import com.lumenlab.app.ui.DoubleExposureScreen
 import com.lumenlab.app.ui.LiveTestScreen
 import com.lumenlab.app.ui.Mode
 import com.lumenlab.app.ui.FocusStackScreen
+import com.lumenlab.app.ui.HdrScreen
 import com.lumenlab.app.ui.GalleryScreen
 import com.lumenlab.app.ui.ModeTabs
 import com.lumenlab.app.ui.MoreScreen
@@ -101,6 +102,12 @@ private fun LumenlabApp() {
                         tabs = tabs,
                     )
                     Mode.Focus -> FocusStackScreen(
+                        limits = limitsForControls,
+                        settings = settings,
+                        onOpenSettings = { screen = Screen.Settings },
+                        tabs = tabs,
+                    )
+                    Mode.Hdr -> HdrScreen(
                         limits = limitsForControls,
                         settings = settings,
                         onOpenSettings = { screen = Screen.Settings },

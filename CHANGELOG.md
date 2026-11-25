@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.28.0] - 2026-11-25
+
+### Added
+- HDR mode. Put the phone on a support and press the shutter. The app reads the exposure the camera chose, fixes focus, white balance and ISO/time by hand, and takes 3 or 5 photos darker and brighter than that (Strength chips: Mild 1 EV, Normal 1.5 EV, Strong 2 EV between photos). The exposure time is changed first; ISO covers what the time cannot reach. The photos are lined up to the middle one and blended with exposure fusion on layered detail, so each part comes mostly from the photo where it is well exposed, detailed and colourful, without visible joins. Saved to Pictures/Lumenlab/HDR and listed in the gallery under Results and a new HDR chip.
+- Unit tests for the exposure plan, the blend (detail kept in dark and bright halves), a single photo coming back unchanged, pixel weights, layer sizes and brightness normalising for alignment.
+
+### Notes
+- Needs manual exposure support; otherwise the mode says it is not available.
+- The result is about 3 MP (photos are read at 2000 px on the long side to fit in memory).
+- Alignment corrects shift only. Moving subjects can ghost.
+
 ## [0.27.0] - 2026-11-25
 
 ### Added

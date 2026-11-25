@@ -6,7 +6,7 @@ import java.util.Locale
 import java.util.TimeZone
 
 /** What kind of picture a saved file is, worked out from the folder it was saved in. */
-enum class GalleryCategory { Photos, Stacked, Panorama, Blend, SuperRes, FocusStack, Frames, Other }
+enum class GalleryCategory { Photos, Stacked, Panorama, Blend, SuperRes, FocusStack, Hdr, Frames, Other }
 
 /** The filter chips on the Gallery screen. Results hides the many single frames of a burst. */
 enum class GalleryFilter(val label: String, val categories: Set<GalleryCategory>) {
@@ -14,7 +14,7 @@ enum class GalleryFilter(val label: String, val categories: Set<GalleryCategory>
         "Results",
         setOf(
             GalleryCategory.Photos, GalleryCategory.Stacked, GalleryCategory.Panorama, GalleryCategory.Blend,
-            GalleryCategory.SuperRes, GalleryCategory.FocusStack,
+            GalleryCategory.SuperRes, GalleryCategory.FocusStack, GalleryCategory.Hdr,
         ),
     ),
     Photos("Photos", setOf(GalleryCategory.Photos)),
@@ -23,6 +23,7 @@ enum class GalleryFilter(val label: String, val categories: Set<GalleryCategory>
     Blend("Double", setOf(GalleryCategory.Blend)),
     SuperRes("Super res", setOf(GalleryCategory.SuperRes)),
     Focus("Focus", setOf(GalleryCategory.FocusStack)),
+    Hdr("HDR", setOf(GalleryCategory.Hdr)),
     Frames("Frames", setOf(GalleryCategory.Frames)),
     Other("Other", setOf(GalleryCategory.Other)),
 }
@@ -52,6 +53,7 @@ fun galleryCategory(folder: String): GalleryCategory {
         sub == "DOUBLE" -> GalleryCategory.Blend
         sub == "SUPERRES" -> GalleryCategory.SuperRes
         sub == "FOCUS" -> GalleryCategory.FocusStack
+        sub == "HDR" -> GalleryCategory.Hdr
         sub.startsWith("SESSION_") -> GalleryCategory.Frames
         else -> GalleryCategory.Other
     }
