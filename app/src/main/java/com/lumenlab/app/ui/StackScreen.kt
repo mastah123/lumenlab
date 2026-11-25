@@ -178,7 +178,7 @@ fun StackScreen(settings: AppSettings, onBack: () -> Unit) {
                                 val dark = if (chosen.manual) {
                                     withContext(Dispatchers.IO) { DarkFrames.load(context, chosen.exposureNs, chosen.iso) }
                                 } else null
-                                val r = Stacker.stack(context, chosen, mode, boost, bin = binOn, dark = dark) { label, fraction ->
+                                val r = Stacker.stack(context, chosen, mode, boost, bin = binOn, dark = dark, rotate = settings.rotateAlign) { label, fraction ->
                                     progressLabel = formatProgress(label, fraction, tracker.etaSeconds(fraction))
                                     progress = fraction
                                 }

@@ -41,12 +41,21 @@ class StackResult(
     val message: String,
 )
 
-private class Star(val x: Float, val y: Float)
+private typealias Star = StarAlign.Pt
 private class Candidate(val x: Int, val y: Int, val v: Float)
-private class Placed(val ref: FrameRef, val sx: Int, val sy: Int, val weight: Int)
+private class Placed(
+    val ref: FrameRef,
+    val sx: Int,
+    val sy: Int,
+    val weight: Int,
+    /** The sky's turn against the first frame, and the shift at the picture centre, both at full size. */
+    val theta: Float = 0f,
+    val tx: Float = 0f,
+    val ty: Float = 0f,
+)
 
 /**
- * Aligns frames by matching stars (translation only), then averages them or keeps the
+ * Aligns frames by matching stars (a shift and a small turn, as the sky rotates), then averages them or keeps the
  * brightest pixels. Works in two passes so only the needed frames are decoded at full size.
  * Inputs can carry weights, so stacked batches combine correctly. [Live] does the same one
  * frame at a time while a burst is still running.
@@ -68,9 +77,10 @@ object Stacker {
         previews: Boolean = true,
         bin: Boolean = false,
         dark: DarkFrame? = null,
+        rotate: Boolean = true,
         onProgress: (String, Float) -> Unit,
     ): StackResult = withContext(Dispatchers.Default) {
-        run(context, session, mode, boost, weights, folder, previews, bin, dark, onProgress)
+        run(context, session, mode, boost, weights, folder, previews, bin, dark, rotate, onProgress)
     }
 
     private fun failure(message: String) =
@@ -86,6 +96,7 @@ object Stacker {
         previews: Boolean,
         bin: Boolean,
         dark: DarkFrame?,
+        rotate: Boolean,
         onProgress: (String, Float) -> Unit,
     ): StackResult {
         val refs = session.frames.take(MAX_FRAMES)
@@ -121,9 +132,12 @@ object Stacker {
                 } else if (size != refHalf) {
                     rejected++
                 } else {
-                    val shift = estimateShift(refStars, stars)
-                    if (shift == null) rejected++
-                    else placed += Placed(ref, (shift.first * 2).roundToInt(), (shift.second * 2).roundToInt(), weightOf(index))
+                    val fit = align(refStars, stars, size.first, size.second, rotate)
+                    if (fit == null) rejected++
+                    else placed += Placed(
+                        ref, (fit.tx * 2).roundToInt(), (fit.ty * 2).roundToInt(), weightOf(index),
+                        fit.theta, fit.tx * 2, fit.ty * 2,
+                    )
                 }
             }
         } else {
@@ -132,10 +146,14 @@ object Stacker {
         if (placed.isEmpty()) return failure("No frame could be read or aligned.")
 
         // Only the area covered by every frame is kept, so every pixel gets the same weight.
-        val x0 = max(0, placed.maxOf { it.sx })
-        val x1 = min(width, width + placed.minOf { it.sx })
-        val y0 = max(0, placed.maxOf { it.sy })
-        val y1 = min(height, height + placed.minOf { it.sy })
+        // A turned frame also leaves its corners empty, so the edges are trimmed by the largest turn.
+        val maxTheta = placed.maxOf { abs(it.theta) }
+        val mx = if (maxTheta > 0f) StarAlign.marginX(maxTheta, width, height) else 0
+        val my = if (maxTheta > 0f) StarAlign.marginY(maxTheta, width, height) else 0
+        val x0 = max(0, placed.maxOf { it.sx }) + mx
+        val x1 = min(width, width + placed.minOf { it.sx }) - mx
+        val y0 = max(0, placed.maxOf { it.sy }) + my
+        val y1 = min(height, height + placed.minOf { it.sy }) - my
         val iw = x1 - x0
         val ih = y1 - y0
         if (iw <= 0 || ih <= 0) return failure("The frames could not be overlapped. Try fewer frames or a steadier phone.")
@@ -152,6 +170,7 @@ object Stacker {
             val highest = if (trim) ByteArray(iw * ih * 3) else null
             val lowest = if (trim) ByteArray(iw * ih * 3).also { it.fill(-1) } else null
             val dk = dark?.takeIf { it.width == width && it.height == height }?.pixels
+            val warped = if (placed.any { it.theta != 0f }) IntArray(width * height) else null
             for ((i, p) in placed.withIndex()) {
                 currentCoroutineContext().ensureActive()
                 onProgress("Stacking ${i + 1} of ${placed.size}", 0.3f + 0.6f * i / placed.size)
@@ -164,17 +183,39 @@ object Stacker {
                 bmp.getPixels(pixels, 0, width, 0, 0, width, height)
                 bmp.recycle()
                 val wgt = p.weight
+                var src = pixels
+                var shiftX = p.sx
+                var shiftY = p.sy
+                var darkNow = dk
+                if (p.theta != 0f && warped != null) {
+                    // The dark frame belongs to the sensor, so it comes off before the frame is turned.
+                    if (dk != null) {
+                        for (k in pixels.indices) {
+                            val a = pixels[k]
+                            val q = dk[k]
+                            pixels[k] = (0xFF shl 24) or
+                                (max(0, ((a shr 16) and 0xFF) - ((q shr 16) and 0xFF)) shl 16) or
+                                (max(0, ((a shr 8) and 0xFF) - ((q shr 8) and 0xFF)) shl 8) or
+                                max(0, (a and 0xFF) - (q and 0xFF))
+                        }
+                    }
+                    StarAlign.warp(pixels, warped, width, height, p.theta, p.tx, p.ty, width / 2f, height / 2f)
+                    src = warped
+                    shiftX = 0
+                    shiftY = 0
+                    darkNow = null
+                }
                 for (oy in 0 until ih) {
-                    val rowBase = (oy + y0 - p.sy) * width + (x0 - p.sx)
+                    val rowBase = (oy + y0 - shiftY) * width + (x0 - shiftX)
                     var d = oy * iw * 3
                     for (ox in 0 until iw) {
                         val index = rowBase + ox
-                        val px = pixels[index]
+                        val px = src[index]
                         var r = (px shr 16) and 0xFF
                         var g = (px shr 8) and 0xFF
                         var b = px and 0xFF
-                        if (dk != null) {
-                            val q = dk[index]
+                        if (darkNow != null) {
+                            val q = darkNow[index]
                             r = max(0, r - ((q shr 16) and 0xFF))
                             g = max(0, g - ((q shr 8) and 0xFF))
                             b = max(0, b - (q and 0xFF))
@@ -330,7 +371,7 @@ object Stacker {
      * Stacks frames one at a time as they arrive, on a full-size canvas. Call [add] for every
      * frame in order, then [finish]. Not thread-safe: feed it from one coroutine.
      */
-    class Live(private val mode: StackMode, private val dark: DarkFrame? = null) {
+    class Live(private val mode: StackMode, private val dark: DarkFrame? = null, private val rotate: Boolean = true) {
         private val average = mode == StackMode.Average
         private var width = 0
         private var height = 0
@@ -343,6 +384,8 @@ object Stacker {
         private var minSy = 0
         private var maxSy = 0
         private var rotation = 0
+        private var maxTheta = 0f
+        private var warped: IntArray? = null
 
         var used = 0
             private set
@@ -393,6 +436,9 @@ object Stacker {
 
             var sx = 0
             var sy = 0
+            var theta = 0f
+            var fullTx = 0f
+            var fullTy = 0f
             if (average) {
                 val stars = detectStarsFromLuma(halfLuma(px, w, h), w / 2, h / 2)
                 val ref = refStars
@@ -400,25 +446,40 @@ object Stacker {
                     refStars = stars
                     alignable = stars.size >= 8
                 } else if (alignable) {
-                    val shift = estimateShift(ref, stars)
-                    if (shift == null) {
+                    val fit = align(ref, stars, w / 2, h / 2, rotate)
+                    if (fit == null) {
                         rejected++
                         return false
                     }
-                    sx = (shift.first * 2).roundToInt()
-                    sy = (shift.second * 2).roundToInt()
+                    sx = (fit.tx * 2).roundToInt()
+                    sy = (fit.ty * 2).roundToInt()
+                    theta = fit.theta
+                    fullTx = fit.tx * 2
+                    fullTy = fit.ty * 2
                 }
             }
 
-            val xStart = max(0, -sx)
-            val xEnd = min(w, w - sx)
-            val yStart = max(0, -sy)
-            val yEnd = min(h, h - sy)
+            // A turned frame is carried into the reference's place first, so it is added without any further offset.
+            var source: IntArray = px
+            var ox = sx
+            var oy = sy
+            if (theta != 0f) {
+                val target = warped ?: IntArray(w * h).also { warped = it }
+                StarAlign.warp(px, target, w, h, theta, fullTx, fullTy, w / 2f, h / 2f)
+                source = target
+                ox = 0
+                oy = 0
+                maxTheta = StarAlign.widest(maxTheta, theta)
+            }
+            val xStart = max(0, -ox)
+            val xEnd = min(w, w - ox)
+            val yStart = max(0, -oy)
+            val yEnd = min(h, h - oy)
             for (y in yStart until yEnd) {
                 var src = y * w + xStart
-                var dst = ((y + sy) * w + xStart + sx) * 3
+                var dst = ((y + oy) * w + xStart + ox) * 3
                 for (x in xStart until xEnd) {
-                    val p = px[src]
+                    val p = source[src]
                     val r = (p shr 16) and 0xFF
                     val g = (p shr 8) and 0xFF
                     val b = p and 0xFF
@@ -456,10 +517,12 @@ object Stacker {
         ): StackResult {
             val sums = acc
             if (sums == null || used == 0) return failure("No frame could be added.")
-            val x0 = max(0, maxSx)
-            val x1 = min(width, width + minSx)
-            val y0 = max(0, maxSy)
-            val y1 = min(height, height + minSy)
+            val mx = if (maxTheta != 0f) StarAlign.marginX(maxTheta, width, height) else 0
+            val my = if (maxTheta != 0f) StarAlign.marginY(maxTheta, width, height) else 0
+            val x0 = max(0, maxSx) + mx
+            val x1 = min(width, width + minSx) - mx
+            val y0 = max(0, maxSy) + my
+            val y1 = min(height, height + minSy) - my
             val iw = x1 - x0
             val ih = y1 - y0
             if (iw <= 0 || ih <= 0) return failure("The frames could not be overlapped.")
@@ -478,6 +541,7 @@ object Stacker {
             }
             acc = null
             pixels = null
+            warped = null
             val note = if (average && !aligned) "Not enough stars to align, so frames were stacked without alignment." else ""
             return publish(
                 context, out, iw, ih, rotation, boost, folder, label, mode, usedRefs, used, rejected,
@@ -933,6 +997,20 @@ object Stacker {
             if (stars.size >= STAR_COUNT) break
         }
         return stars
+    }
+
+    /** Lines the stars of a frame up with the reference. With [rotate] off only a shift is looked for. */
+    private fun align(ref: List<Star>, cur: List<Star>, halfW: Int, halfH: Int, rotate: Boolean): StarAlign.Similarity? {
+        val fit: StarAlign.Similarity = if (rotate) {
+            StarAlign.estimate(ref, cur, halfW / 2f, halfH / 2f, MAX_SHIFT_HALF) ?: return null
+        } else {
+            val shift = estimateShift(ref, cur) ?: return null
+            StarAlign.Similarity(0f, shift.first, shift.second, 0)
+        }
+        // A turn too small to move even the far corner half a pixel is not worth the slower resampling.
+        return if (abs(fit.theta) < StarAlign.negligibleAngle(halfW * 2, halfH * 2)) {
+            StarAlign.Similarity(0f, fit.tx, fit.ty, fit.matches)
+        } else fit
     }
 
     /** Votes on the shift that lines up most star pairs. Returns null if no shift is convincing. */

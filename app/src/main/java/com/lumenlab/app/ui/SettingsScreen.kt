@@ -103,6 +103,9 @@ fun SettingsScreen(
                 SwitchRow("Night noise reduction (2×2)",
                     "Combines four pixels into one. Halves the picture size and cuts noise about 2×",
                     settings.nightBin) { onSettings(settings.copy(nightBin = it)) }
+                SwitchRow("Correct sky rotation",
+                    "Stars turn about 15° an hour. Lines up that turn as well as the shift. Slower; helps most on long sessions and when combining batches",
+                    settings.rotateAlign) { onSettings(settings.copy(rotateAlign = it)) }
                 Text(
                     "How often to stack is set with the STACK slider on the camera screen.",
                     style = MaterialTheme.typography.bodySmall,

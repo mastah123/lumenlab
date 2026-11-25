@@ -7,6 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.27.0] - 2026-11-25
+
+### Added
+- Star alignment now corrects the sky's rotation as well as the shift. The sky turns about 15° an hour, so a few minutes already leave the edges of a stack several pixels off when only the shift is fixed. Each frame's stars are matched with a small turn about the picture centre plus a shift; a frame that turned is resampled into the first frame's place before it is added. This applies to stacking while capturing, live stacking, final stacks, batch combining and the Stacking Studio.
+- Settings, Stacking: Correct sky rotation (on by default). Turn it off for the old shift-only alignment, which is faster.
+- Unit tests for the star matching (shift only, a small turn, a large turn found by searching, a negative turn with missing stars, unrelated fields, too few stars), the resampling and the edge margins.
+
+### Changed
+- Stacks are trimmed a little more at the edges when frames turned, so every pixel in the result is covered by every frame. The trimming grows with the turn.
+- A turn too small to move even the far corner half a pixel is ignored, so short bursts keep the fast shift-only path.
+
+### Notes
+- Turned frames take longer to stack because each one is resampled. Expect a slower stack on long sessions.
+- Turns up to about 12° from the first frame are found. Beyond that, frames are rejected as before.
+- Stars must be detected: with fewer than 8 stars the frames are still stacked without alignment, as before.
+
 ## [0.26.0] - 2026-11-24
 
 ### Added

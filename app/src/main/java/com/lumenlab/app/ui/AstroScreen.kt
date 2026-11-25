@@ -596,7 +596,7 @@ private fun AstroContent(
             val dark = if (darkFor.manual) {
                 withContext(Dispatchers.IO) { DarkFrames.load(context, darkFor.exposureNs, darkFor.iso) }
             } else null
-            val live = if (app.liveStacking && app.stackBatch >= 0 && app.frameCount > 1) Stacker.Live(method, dark) else null
+            val live = if (app.liveStacking && app.stackBatch >= 0 && app.frameCount > 1) Stacker.Live(method, dark, app.rotateAlign) else null
             val liveChannel = Channel<Pair<Int, ByteArray>>(2)
             val liveAdded = Collections.synchronizedSet(mutableSetOf<Int>())
             var liveJob: Job? = null
@@ -661,7 +661,7 @@ private fun AstroContent(
                     )
                     val batchCount = max(1, (total + batch - 1) / max(1, batch))
                     val r = try {
-                        Stacker.stack(context, info, method, false, folder = "Lumenlab/STACKED/BATCHES", previews = false, dark = dark) { _, f ->
+                        Stacker.stack(context, info, method, false, folder = "Lumenlab/STACKED/BATCHES", previews = false, dark = dark, rotate = app.rotateAlign) { _, f ->
                             stackFraction = (batchNo - 1 + f) / (batchCount + 1f)
                             phase = "Batch $batchNo of $batchCount · ${(f * 100).roundToInt()}%"
                         }
@@ -762,7 +762,7 @@ private fun AstroContent(
                             phase = "Stacking ${savedFrames.size} frames…"
                             val info = SessionInfo(session, savedFrames.toList(), used.exposureNs, used.iso, used.manual)
                             tracker.begin()
-                            finalResult = Stacker.stack(context, info, method, app.boost, bin = app.nightBin, dark = dark) { label, f ->
+                            finalResult = Stacker.stack(context, info, method, app.boost, bin = app.nightBin, dark = dark, rotate = app.rotateAlign) { label, f ->
                                 stackFraction = f
                                 phase = formatProgress(label, f, tracker.etaSeconds(f))
                             }
@@ -774,7 +774,7 @@ private fun AstroContent(
                                 tracker.begin()
                                 val batchCount = batchImages.size + batchFailed
                                 finalResult = Stacker.stack(
-                                    context, info, method, app.boost, weights = batchWeights.toList(), bin = app.nightBin,
+                                    context, info, method, app.boost, weights = batchWeights.toList(), bin = app.nightBin, rotate = app.rotateAlign,
                                 ) { label, f ->
                                     stackFraction = (batchCount + f) / (batchCount + 1f)
                                     phase = formatProgress(label, f, tracker.etaSeconds(f))

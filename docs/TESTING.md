@@ -12,6 +12,7 @@ Runs on the JVM, no phone needed. CI runs it before building the APKs.
 |------------|--------|
 | `LongExposurePlanTest` | Exposure path verdict (hardware, stacking, auto boost, none, error), frame plan and SNR gain, brightness check, exposure text |
 | `StackProgressTest` | Time-left text and progress text |
+| `StarAlignTest` | Star matching with shift and turn, large turn search, resampling, edge margins |
 | `FocusStackTest` | Focus steps, merge takes the sharp parts, flat areas, shifting, detail measure |
 | `SuperResTest` | Sub-pixel photo alignment, rejecting unrelated photos, merge beats single upscale, sharpness score |
 | `StarExposureTest` | NPF and 500 rule, pixel size, clamping, exposure slider reverse mapping, focus sharpness measure |
@@ -27,6 +28,8 @@ Not covered by automated tests: Camera2 capture, stacking, panorama and double e
 - [ ] ASTRO: exposure, ISO and focus sliders change the preview; burst saves a session folder; dark frame capture; auto stack
 - [ ] ASTRO EXP panel: hint shows "Stars stay sharp up to about ..."; the Stars button moves the slider to that time (or the phone's limit)
 - [ ] ASTRO FOCUS panel: Sharpness bar moves when you change focus on a bright light; Best appears near the peak; Reset works; the bar stops updating when the panel closes
+- [ ] Sky rotation: shoot a 20 to 30 minute session on a tripod, stack it with Correct sky rotation on and off; with it on, stars near the corners stay round and sharp, with it off they smear into short arcs
+- [ ] Settings, Stacking: Correct sky rotation switch is on by default and is respected by stacking while capturing, live stacking, the final stack and the Stacking Studio
 - [ ] TRAILS: interval run starts, stops and saves one merged image
 - [ ] PANO: turning the phone takes photos; second shutter press stitches; result saved in Pictures/Lumenlab/PANORAMA; Add photo button on phones without a rotation sensor
 - [ ] DOUBLE: first and second photo (camera and gallery), ghost slider, Blend/Lighten/Silhouette, saved to Pictures/Lumenlab/DOUBLE
