@@ -42,10 +42,11 @@ import com.lumenlab.app.ui.PlannerScreen
 import com.lumenlab.app.ui.ProbeScreen
 import com.lumenlab.app.ui.RawScreen
 import com.lumenlab.app.ui.SettingsScreen
+import com.lumenlab.app.ui.SkyScreen
 import com.lumenlab.app.ui.StackScreen
 import com.lumenlab.app.ui.TesterScreen
 
-private enum class Screen { Camera, Gallery, Stack, Tester, Planner, Settings, Probe, Raw, LiveTest }
+private enum class Screen { Camera, Gallery, Stack, Tester, Planner, Sky, Settings, Probe, Raw, LiveTest }
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -108,6 +109,7 @@ private fun LumenlabApp() {
                         onOpenStack = { screen = Screen.Stack },
                         onOpenTester = { screen = Screen.Tester },
                         onOpenPlanner = { screen = Screen.Planner },
+                        onOpenSky = { screen = Screen.Sky },
                         onOpenSettings = { screen = Screen.Settings },
                         tabs = tabs,
                     )
@@ -177,6 +179,7 @@ private fun LumenlabApp() {
                 onSettings = updateSettings,
                 onBack = { screen = Screen.Camera },
             )
+            Screen.Sky -> SkyScreen(onBack = { screen = Screen.Camera })
             Screen.Tester -> TesterScreen(cameras = cameras, profile = profile, onBack = { screen = Screen.Camera })
             Screen.Settings -> SettingsScreen(
                 settings = settings,

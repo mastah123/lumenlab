@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Layers
+import androidx.compose.material.icons.filled.NightsStay
 import androidx.compose.material.icons.filled.PhotoCamera
 import androidx.compose.material.icons.filled.PhotoLibrary
 import androidx.compose.material.icons.filled.Schedule
@@ -61,6 +62,7 @@ fun MoreScreen(
     onOpenStack: () -> Unit,
     onOpenTester: () -> Unit,
     onOpenPlanner: () -> Unit,
+    onOpenSky: () -> Unit,
     onOpenSettings: () -> Unit,
     tabs: @Composable () -> Unit,
 ) {
@@ -108,6 +110,8 @@ fun MoreScreen(
                         "Stack saved frames by hand. $captures capture${if (captures == 1) "" else "s"} ready",
                     Modifier.fillMaxWidth(), cardColors, onOpenStack,
                 )
+                Tile(Icons.Filled.NightsStay, "Moon and sky", "Moon phase, moonrise, moonset and the dark hours for your place",
+                    Modifier.fillMaxWidth(), cardColors, onOpenSky)
                 Tile(Icons.Filled.Schedule, "Session planner", "How many frames, how long, and whether storage and battery will last",
                     Modifier.fillMaxWidth(), cardColors, onOpenPlanner)
                 Tile(Icons.Filled.PhotoCamera, "Camera Tester", "Every camera, its limits and what it can really do",

@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.33.0] - 2026-11-26
+
+### Added
+- Moon and sky screen (MORE tab). Shows the Moon's phase with an emoji, how much of it is lit, its age, the next full and new moon, and advice on what the Moon does to faint objects. With your position it also lists the next 24 hours of sunrise, sunset, astronomical dusk and dawn, moonrise and moonset, and shows the dark hours and the dark and moonless hours, which are the best time for the Milky Way and nebulae.
+- Everything is calculated on the phone from short series formulas, so it works with no network. Times use the phone's time zone.
+- Position: "Use the phone's position" reads the last position the phone already knows (coarse location permission, asked only when the button is pressed; the GPS is not started). Or type latitude and longitude. The position is stored on the phone only.
+- Unit tests against known events: London sunrise and sunset at the equinox, Manila sunrise, the April 2024 new and full moon, phase names and lit share, moonrise coming about 50 minutes later each day, and moonless dark time lying inside the dark hours.
+
+### Notes
+- The Sun is good to a few minutes and the Moon to about 10 minutes. This is for planning, not for eclipse timing.
+- If the phone has no saved position (never used maps, location off), type it in.
+- Near the poles there may be no sunrise or no dark in the next 24 hours; the screen says so.
+
 ## [0.32.0] - 2026-11-26
 
 ### Added

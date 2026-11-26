@@ -10,7 +10,7 @@ Lumenlab does not assume every phone is the same. It inspects the device through
 
 ## Status
 
-Version 0.32.0 covers **Stages 1 to 5**, plus camera modes (NORMAL, ASTRO, TRAILS, DOUBLE, PANO, SUPER, FOCUS, HDR, NIGHT, MOON, PAINT and MORE), a **Stacking Studio**, automatic stacking while capturing, storage-saving options and temperature protection. Earlier stages: capability detection, an experimental **long exposure probe**, a live preview with manual controls, and multi-frame capture with a self-timer. A **RAW capture test** checks whether the phone really supports RAW.
+Version 0.33.0 covers **Stages 1 to 5**, plus camera modes (NORMAL, ASTRO, TRAILS, DOUBLE, PANO, SUPER, FOCUS, HDR, NIGHT, MOON, PAINT and MORE), a **Stacking Studio**, automatic stacking while capturing, storage-saving options and temperature protection. Earlier stages: capability detection, an experimental **long exposure probe**, a live preview with manual controls, and multi-frame capture with a self-timer. A **RAW capture test** checks whether the phone really supports RAW.
 
 | Stage | Scope | State |
 |-------|-------|-------|
@@ -28,6 +28,7 @@ Version 0.32.0 covers **Stages 1 to 5**, plus camera modes (NORMAL, ASTRO, TRAIL
 - Star alignment that follows the sky's rotation as well as the shift (Settings: Correct sky rotation)
 - Star exposure helper (NPF and 500 rule) and a focus assist sharpness meter
 - Gallery of everything you saved, with filters, full-screen viewer, multi-select, share and delete
+- Moon and sky (MORE): moon phase, how much is lit, next full and new moon, moonrise, moonset, sunrise, sunset and the dark and moonless hours for your place, worked out on the phone with no network
 - Session planner (MORE): pick the total light and frame length and see the frames, time, finish time, storage and battery, with warnings; one button sets the frame count on the ASTRO tab
 - Optional notification when a burst or star trails run of over a minute finishes while the app is not on screen (Settings, Notifications)
 - Mode tabs like a phone camera: NORMAL (plain auto camera), ASTRO (manual camera with stacking), TRAILS (interval star trails), PANO (turn the phone to take a stitched panorama), SUPER (a burst of handheld photos merged into a finer picture), FOCUS (focus stacking for everything sharp), HDR (darker and brighter photos blended so shadows and highlights keep detail), NIGHT (a handheld burst of short photos merged into a clean night picture), MOON (the Moon tracked over a burst, the sharpest photos merged and sharpened), PAINT (light painting: moving lights leave trails), DOUBLE (two photos blended) and MORE (Stacking Studio, Camera Tester, tests)

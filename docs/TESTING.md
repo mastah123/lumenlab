@@ -13,6 +13,7 @@ Runs on the JVM, no phone needed. CI runs it before building the APKs.
 | `LongExposurePlanTest` | Exposure path verdict (hardware, stacking, auto boost, none, error), frame plan and SNR gain, brightness check, exposure text |
 | `StackProgressTest` | Time-left text and progress text |
 | `StarAlignTest` | Star matching with shift and turn, large turn search, resampling, edge margins |
+| `SkyInfoTest` | Sunrise and sunset, new and full moon times, phase names, moonrise drift, dark and moonless time, advice text |
 | `SessionPlanTest` | Frame count, time and storage numbers, storage, battery and heat warnings, duration and size text |
 | `LightPaintTest` | Trail kept, no noise haze, brighter colour wins, preview size, photo count |
 | `MoonModelTest` | Finding the Moon, crop window, sharpest photos, exposure by phase, finishing stretch |
@@ -51,6 +52,7 @@ Not covered by automated tests: Camera2 capture, stacking, panorama and double e
 - [ ] PAINT: on a support in a dark room, Time, Each photo and ISO chips work; shutter starts, the trails so far show over the preview, a second press finishes early; wave a phone torch or sparkler for a trail; result saves to Pictures/Lumenlab/PAINT and is listed in the Gallery (Results and Light paint); the dark background stays dark; phone without manual exposure says so
 - [ ] MORE: Session planner tile opens the planner; chips change frames, time and finish time; ★ matches the suggestion on the ASTRO exposure; warnings appear for 4 h with low battery or low storage; the button sets the frame count on ASTRO; back arrow returns to the camera
 - [ ] Settings, Notifications: turning the switch on asks for permission on Android 13+ and stays off if refused; start a 70 s or longer burst, leave the app, and a notification arrives when it finishes; tapping it opens the app; nothing shows if the app is on screen
+- [ ] MORE: Moon and sky tile opens the screen; the phase and lit share match a moon app; "Use the phone's position" asks for permission and fills latitude and longitude (or says there is no saved position); typed position saves and the times update; sunrise, sunset and moonrise are within about 10 minutes of a trusted source; the dark and moonless lines look sensible; back arrow returns to the camera
 - [ ] Mode tabs scroll sideways and the selected tab stays in view after switching mode
 - [ ] MORE: Stacking Studio, Camera Tester, Phone Check, tests shortcut
 - [ ] Settings: night mode (red), temperature protection, storage options
