@@ -39,6 +39,7 @@ enum class Mode(val label: String) {
     Hdr("HDR"),
     Night("NIGHT"),
     Moon("MOON"),
+    Paint("PAINT"),
     More("MORE"),
 }
 

@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.31.0] - 2026-11-25
+
+### Added
+- PAINT mode (light painting). Put the phone on a support in the dark and press the shutter. Photos are taken one after another with everything fixed by hand, and the brightest value of every pixel is kept, so a light moved through the scene leaves a trail while the background stays dark. Chips: Time (30 s, 1 min, 2 min, 5 min), Each photo (0.5 s, 1 s, 2 s) and ISO (100 to 800, kept inside what the camera allows). The trails so far are shown over the preview while photos are taken, and the shutter button finishes early. Saved to Pictures/Lumenlab/PAINT and listed in the gallery under Results and a new Light paint chip.
+- Each photo is merged in the background while the next is taken, so only one photo at a time is held in memory and trails have few gaps. The original photos are not kept.
+- A small level is taken off every photo before it is merged, so sensor noise in the dark does not build up into a haze.
+- Unit tests for the trail, noise not building up, brighter colours winning, the preview size and the photo count.
+
+### Notes
+- The phone must not move at all. There is no alignment.
+- A short gap between photos remains while the camera saves each one, so fast lights can leave dotted trails; longer photos give smoother trails.
+- The result is about 3 MP. Needs manual exposure support; otherwise the mode says it is not available.
+
 ## [0.30.0] - 2026-11-25
 
 ### Added
