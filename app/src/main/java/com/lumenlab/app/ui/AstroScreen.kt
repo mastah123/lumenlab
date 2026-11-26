@@ -93,6 +93,7 @@ import com.lumenlab.app.camera.CaptureStore
 import com.lumenlab.app.camera.ControlLimits
 import com.lumenlab.app.camera.CrashLog
 import com.lumenlab.app.camera.DarkFrames
+import com.lumenlab.app.camera.Notifier
 import com.lumenlab.app.camera.FlashMode
 import com.lumenlab.app.camera.FrameRef
 import com.lumenlab.app.camera.LiveReading
@@ -590,6 +591,7 @@ private fun AstroContent(
             stackFraction = null
             frameIndex = 0
             val app = latestSettings.let { if (latestMode == Mode.Normal) it.copy(frameCount = 1, stackBatch = -1) else it }
+            val startedAt = SystemClock.elapsedRealtime()
             frameTotal = app.frameCount
             val method = StackMode.Average
             val darkFor = latestManual
@@ -806,6 +808,11 @@ private fun AstroContent(
                     if (batchFailed > 0) append("$batchFailed batch(es) could not be stacked; their frames were kept.")
                 }.trim()
                 status = problems.ifEmpty { null }
+                Notifier.finished(
+                    context, app.notifyDone, startedAt, "Session finished",
+                    "${savedFrames.size} frame${if (savedFrames.size == 1) "" else "s"} captured" +
+                        if (result != null && result.verified) ", stack saved." else ".",
+                )
                 if (batch >= 0 && result != null && result.verified) {
                     stackDone = true
                     vibrate(context)
@@ -987,6 +994,10 @@ private fun AstroContent(
                         append("The star trails image could not be saved and checked. A checkpoint may be in the gallery. ")
                     }
                 }.trim().ifEmpty { null }
+                Notifier.finished(
+                    context, app.notifyDone, sessionStart, "Star trails finished",
+                    if (result != null && result.verified) "${engine.shots} shots combined and saved." else "The run ended. Open the app to check.",
+                )
             } finally {
                 if (window != null && lights != null) {
                     lights.screenBrightness = WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_NONE

@@ -1,5 +1,9 @@
 package com.lumenlab.app.ui
 
+import android.Manifest
+import android.os.Build
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -17,6 +21,7 @@ import androidx.compose.material.icons.filled.DeleteOutline
 import androidx.compose.material.icons.filled.DeviceThermostat
 import androidx.compose.material.icons.filled.Image
 import androidx.compose.material.icons.filled.Layers
+import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Palette
 import androidx.compose.material.icons.filled.PhoneAndroid
 import androidx.compose.material.icons.filled.Science
@@ -53,6 +58,7 @@ import com.lumenlab.app.camera.TempPreset
 import com.lumenlab.app.camera.Thermal
 import com.lumenlab.app.camera.appBuild
 import com.lumenlab.app.camera.describe
+import com.lumenlab.app.camera.Notifier
 import com.lumenlab.app.camera.formatExposure
 import com.lumenlab.app.camera.toJson
 
@@ -71,6 +77,10 @@ fun SettingsScreen(
     val context = LocalContext.current
     val colors = MaterialTheme.colorScheme
     var confirmReset by remember { mutableStateOf(false) }
+    val askNotifications = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
+        // Without the permission the switch would do nothing, so it stays off.
+        onSettings(settings.copy(notifyDone = granted))
+    }
     var confirmProtectionOff by remember { mutableStateOf(false) }
     var crash by remember { mutableStateOf(CrashLog.read(context)) }
     val thermal by rememberThermal()
@@ -124,6 +134,19 @@ fun SettingsScreen(
                                 askOriginals = policy == OriginalsPolicy.Ask,
                             )
                         )
+                    }
+                }
+            }
+
+            SectionTitle("Notifications", Icons.Filled.Notifications)
+            SettingsCard {
+                SwitchRow("Tell me when a session finishes",
+                    "A notification when a burst or star trails run of over a minute is done and the app is not on screen",
+                    settings.notifyDone) { on ->
+                    if (on && !Notifier.permitted(context) && Build.VERSION.SDK_INT >= 33) {
+                        askNotifications.launch(Manifest.permission.POST_NOTIFICATIONS)
+                    } else {
+                        onSettings(settings.copy(notifyDone = on))
                     }
                 }
             }

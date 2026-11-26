@@ -13,6 +13,7 @@ Runs on the JVM, no phone needed. CI runs it before building the APKs.
 | `LongExposurePlanTest` | Exposure path verdict (hardware, stacking, auto boost, none, error), frame plan and SNR gain, brightness check, exposure text |
 | `StackProgressTest` | Time-left text and progress text |
 | `StarAlignTest` | Star matching with shift and turn, large turn search, resampling, edge margins |
+| `SessionPlanTest` | Frame count, time and storage numbers, storage, battery and heat warnings, duration and size text |
 | `LightPaintTest` | Trail kept, no noise haze, brighter colour wins, preview size, photo count |
 | `MoonModelTest` | Finding the Moon, crop window, sharpest photos, exposure by phase, finishing stretch |
 | `NightMergeTest` | Night burst plan (time, ISO, gain), noise averaging, moved parts ignored, brightening, reference and blur choice |
@@ -48,6 +49,8 @@ Not covered by automated tests: Camera2 capture, stacking, panorama and double e
 - [ ] NIGHT: in a dim room, handheld, shutter takes 8/12/16 photos with a progress bar and a second press stops early after 3; merge shows progress; result saves to Pictures/Lumenlab/NIGHT and appears in the Gallery (Results and Night); compare with one normal night photo for noise and sharpness; Shutter chips change the exposure; a person walking through the scene must not ghost; phone without manual exposure says so
 - [ ] MOON: aim at the Moon on a support; Phase and Brightness chips change the exposure; shutter takes 8/12/16 photos, a second press stops early after 3; result is a square crop around the Moon, saved to Pictures/Lumenlab/MOON and listed in the Gallery (Results and Moon); the Moon is neither grey nor burnt out at Normal for the right phase; with no Moon in view the message says so; phone without manual exposure says so
 - [ ] PAINT: on a support in a dark room, Time, Each photo and ISO chips work; shutter starts, the trails so far show over the preview, a second press finishes early; wave a phone torch or sparkler for a trail; result saves to Pictures/Lumenlab/PAINT and is listed in the Gallery (Results and Light paint); the dark background stays dark; phone without manual exposure says so
+- [ ] MORE: Session planner tile opens the planner; chips change frames, time and finish time; ★ matches the suggestion on the ASTRO exposure; warnings appear for 4 h with low battery or low storage; the button sets the frame count on ASTRO; back arrow returns to the camera
+- [ ] Settings, Notifications: turning the switch on asks for permission on Android 13+ and stays off if refused; start a 70 s or longer burst, leave the app, and a notification arrives when it finishes; tapping it opens the app; nothing shows if the app is on screen
 - [ ] Mode tabs scroll sideways and the selected tab stays in view after switching mode
 - [ ] MORE: Stacking Studio, Camera Tester, Phone Check, tests shortcut
 - [ ] Settings: night mode (red), temperature protection, storage options
@@ -55,7 +58,7 @@ Not covered by automated tests: Camera2 capture, stacking, panorama and double e
 - [ ] Temperature chip shows below the settings icon
 - [ ] All mode tabs are reachable by scrolling and readable
 - [ ] STACK slider panel: title "Stack" on one line, originals button shows an icon and toggles
-- [ ] Settings: sections in order Appearance, Stacking, Safety, Device profile, Tests and experiments, Diagnostics; originals choice (ask/keep/delete) is respected by the next burst
+- [ ] Settings: sections in order Appearance, Stacking, Notifications, Safety, Device profile, Tests and experiments, Diagnostics; originals choice (ask/keep/delete) is respected by the next burst
 - [ ] Every top bar has a working back arrow; share icons work on Camera Tester and Long Exposure Test
 - [ ] MORE tiles and "Tests and settings" button open the right screens
 - [ ] Version in Settings matches `versionName` in `app/build.gradle.kts`

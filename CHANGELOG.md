@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.32.0] - 2026-11-26
+
+### Added
+- Session planner (MORE tab). Choose the total light to collect (30 min to 4 h) and the length of each frame (the NPF or 500 rule value is marked ★). It shows the number of frames, how long the session takes including the camera's pause between frames, the time it would finish if started now, how much less noise than one frame, the storage the frames need against what is free, and a rough battery guess against what is left. Warnings appear when storage or battery will probably not last, when the session is over an hour (heat) or over 1000 frames. One button sets the frame count on the ASTRO tab.
+- Notification when a session finishes. Settings, Notifications, "Tell me when a session finishes" (off by default). When on, a notification is shown when an ASTRO burst or a star trails run of over a minute finishes while the app is not on screen. Android 13 and later asks for permission when the switch is turned on; the switch stays off if it is refused.
+- Unit tests for the frame count, time, storage and noise numbers, the warnings, and the duration and size text.
+
+### Notes
+- The battery figure is a fixed guess of 20% an hour, not a measurement.
+- The planner sets only the frame count; the exposure is set on the ASTRO tab as before.
+- The notification is for ASTRO bursts and star trails. The other modes finish in a minute or two with the app open.
+- Settings order is now Appearance, Stacking, Notifications, Safety, Device profile, Tests and experiments, Diagnostics.
+
 ## [0.31.0] - 2026-11-25
 
 ### Added

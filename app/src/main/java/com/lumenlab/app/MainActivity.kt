@@ -13,6 +13,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import com.lumenlab.app.camera.AppSettings
+import com.lumenlab.app.camera.AppState
 import com.lumenlab.app.camera.CameraDetector
 import com.lumenlab.app.camera.CrashLog
 import com.lumenlab.app.camera.ProfileStore
@@ -37,13 +38,14 @@ import com.lumenlab.app.ui.MoreScreen
 import com.lumenlab.app.ui.NightTheme
 import com.lumenlab.app.ui.PanoramaScreen
 import com.lumenlab.app.ui.SuperResScreen
+import com.lumenlab.app.ui.PlannerScreen
 import com.lumenlab.app.ui.ProbeScreen
 import com.lumenlab.app.ui.RawScreen
 import com.lumenlab.app.ui.SettingsScreen
 import com.lumenlab.app.ui.StackScreen
 import com.lumenlab.app.ui.TesterScreen
 
-private enum class Screen { Camera, Gallery, Stack, Tester, Settings, Probe, Raw, LiveTest }
+private enum class Screen { Camera, Gallery, Stack, Tester, Planner, Settings, Probe, Raw, LiveTest }
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -51,6 +53,16 @@ class MainActivity : ComponentActivity() {
         CrashLog.install(applicationContext)
         enableEdgeToEdge()
         setContent { LumenlabApp() }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        AppState.foreground = true
+    }
+
+    override fun onStop() {
+        AppState.foreground = false
+        super.onStop()
     }
 }
 
@@ -95,6 +107,7 @@ private fun LumenlabApp() {
                         onOpenGallery = { screen = Screen.Gallery },
                         onOpenStack = { screen = Screen.Stack },
                         onOpenTester = { screen = Screen.Tester },
+                        onOpenPlanner = { screen = Screen.Planner },
                         onOpenSettings = { screen = Screen.Settings },
                         tabs = tabs,
                     )
@@ -158,6 +171,12 @@ private fun LumenlabApp() {
             }
             Screen.Gallery -> GalleryScreen(onBack = { screen = Screen.Camera })
             Screen.Stack -> StackScreen(settings = settings, onBack = { screen = Screen.Camera })
+            Screen.Planner -> PlannerScreen(
+                limits = limitsForControls,
+                settings = settings,
+                onSettings = updateSettings,
+                onBack = { screen = Screen.Camera },
+            )
             Screen.Tester -> TesterScreen(cameras = cameras, profile = profile, onBack = { screen = Screen.Camera })
             Screen.Settings -> SettingsScreen(
                 settings = settings,
