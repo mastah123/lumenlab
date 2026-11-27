@@ -78,6 +78,16 @@ object SkyInfo {
         return asin(sin(lat) * sin(dec) + cos(lat) * cos(dec) * cos(hourAngle)) / RAD
     }
 
+    /** Compass direction in degrees (0 north, 90 east, 180 south, 270 west). */
+    fun azimuth(body: Body, jd: Double, latDeg: Double, lonDeg: Double): Double {
+        val gmst = 280.46061837 + 360.98564736629 * (jd - 2451545.0)
+        val hourAngle = (gmst + lonDeg - body.ra) * RAD
+        val lat = latDeg * RAD
+        val dec = body.dec * RAD
+        val fromSouth = atan2(sin(hourAngle), cos(hourAngle) * sin(lat) - tan(dec) * cos(lat))
+        return norm360(fromSouth / RAD + 180.0)
+    }
+
     fun sunAltitude(epochMs: Long, lat: Double, lon: Double): Double {
         val jd = julianDay(epochMs)
         return altitude(sun(jd), jd, lat, lon)

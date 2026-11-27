@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.34.0] - 2026-11-26
+
+### Added
+- MILKY mode (Milky Way landscape). Put the phone on a support facing the Milky Way and press the shutter. 8, 12 or 20 photos are taken with focus at infinity and everything fixed by hand; the exposure is the longest time before stars smear (NPF or 500 rule, shown as Suggested) or 10, 15 or 20 s, at ISO 1600, 3200 or 6400. Every photo is used twice: the ground is a plain average (the ground did not move, so it stays sharp) and the sky is the star-aligned average, with sky rotation corrected (noise down, stars sharp). The two are joined along a horizon line. A guess puts the line where the brightness changes most; sliders then move the Horizon, change the Soft edge and set the Sky boost (black point, lifted mid tones, stronger colour, measured above the horizon only). Save writes the full size picture to Pictures/Lumenlab/MILKYWAY, listed in the gallery under Results and a new Milky Way chip. Photos are added one at a time while the next is taken.
+- The ready screen shows when the core of the Milky Way is up and dark at your place (from the saved position), how high and in which direction, and whether the Moon is down.
+- Moon and sky screen: a new Milky Way core card with the same information.
+- Unit tests for the core's direction and height, July and December windows, compass names, the horizon blend, the sky tone, finding the horizon and shrinking pictures.
+
+### Notes
+- Needs manual exposure support; otherwise the mode says it is not available.
+- Photos are read at 2000 px on the long side, so the result is about 3 MP. Fewer pixels also means fewer faint stars for alignment; if fewer than 8 stars are found the sky is a plain average and the message says so.
+- The ground can only be sharp if the phone does not move. The sky and ground are cropped by the same amount, so the picture is slightly smaller than a single photo.
+- The star detection and alignment from the Stacker are now shared with this mode (made internal); stacking itself is unchanged.
+
 ## [0.33.0] - 2026-11-26
 
 ### Added

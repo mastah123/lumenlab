@@ -29,6 +29,7 @@ import com.lumenlab.app.ui.LiveTestScreen
 import com.lumenlab.app.ui.Mode
 import com.lumenlab.app.ui.FocusStackScreen
 import com.lumenlab.app.ui.HdrScreen
+import com.lumenlab.app.ui.MilkyScreen
 import com.lumenlab.app.ui.MoonScreen
 import com.lumenlab.app.ui.NightScreen
 import com.lumenlab.app.ui.PaintScreen
@@ -144,6 +145,12 @@ private fun LumenlabApp() {
                         tabs = tabs,
                     )
                     Mode.Paint -> PaintScreen(
+                        limits = limitsForControls,
+                        settings = settings,
+                        onOpenSettings = { screen = Screen.Settings },
+                        tabs = tabs,
+                    )
+                    Mode.Milky -> MilkyScreen(
                         limits = limitsForControls,
                         settings = settings,
                         onOpenSettings = { screen = Screen.Settings },

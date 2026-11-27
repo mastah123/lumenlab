@@ -920,7 +920,7 @@ object Stacker {
         0.299f * ((p shr 16) and 255) + 0.587f * ((p shr 8) and 255) + 0.114f * (p and 255)
 
     /** Brightness at half size, averaged from 2 x 2 blocks of a full-size frame. */
-    private fun halfLuma(px: IntArray, w: Int, h: Int): FloatArray {
+    internal fun halfLuma(px: IntArray, w: Int, h: Int): FloatArray {
         val hw = w / 2
         val hh = h / 2
         val out = FloatArray(hw * hh)
@@ -944,7 +944,7 @@ object Stacker {
         return detectStarsFromLuma(FloatArray(w * h) { lum(px[it]) }, w, h)
     }
 
-    private fun detectStarsFromLuma(luma: FloatArray, w: Int, h: Int): List<Star> {
+    internal fun detectStarsFromLuma(luma: FloatArray, w: Int, h: Int): List<StarAlign.Pt> {
         var sum = 0.0
         var sumSq = 0.0
         var n = 0
@@ -1000,7 +1000,7 @@ object Stacker {
     }
 
     /** Lines the stars of a frame up with the reference. With [rotate] off only a shift is looked for. */
-    private fun align(ref: List<Star>, cur: List<Star>, halfW: Int, halfH: Int, rotate: Boolean): StarAlign.Similarity? {
+    internal fun align(ref: List<StarAlign.Pt>, cur: List<StarAlign.Pt>, halfW: Int, halfH: Int, rotate: Boolean): StarAlign.Similarity? {
         val fit: StarAlign.Similarity = if (rotate) {
             StarAlign.estimate(ref, cur, halfW / 2f, halfH / 2f, MAX_SHIFT_HALF) ?: return null
         } else {

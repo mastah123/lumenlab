@@ -34,6 +34,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import com.lumenlab.app.camera.MilkyWay
 import com.lumenlab.app.camera.SessionPlan
 import com.lumenlab.app.camera.SkyInfo
 import com.lumenlab.app.camera.SkyLocation
@@ -156,6 +157,19 @@ fun SkyScreen(onBack: () -> Unit) {
                             "Times are in this phone's time zone and are good to a few minutes.",
                             style = MaterialTheme.typography.bodySmall, color = colors.onSurfaceVariant,
                         )
+                    }
+                }
+                val core = remember(p, now) { MilkyWay.nextWindow(now, p.lat, p.lon) }
+                Card(modifier = Modifier.fillMaxWidth(), colors = cardColors) {
+                    Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                        Text("Milky Way core", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
+                        if (core == null) {
+                            Text("The bright core is not up in the dark in the next 36 hours here. It is best seen from about March to October in the north.")
+                        } else {
+                            Text("Up and dark: ${at(core.startMs)} to ${at(core.endMs)}")
+                            Text("Highest at ${at(core.peakMs)}: ${MilkyWay.clampAltitude(core.peakAltitude)}° to the ${MilkyWay.compass(core.peakAzimuth)}")
+                            Text(if (core.moonless) "The Moon is down for all of it." else "The Moon is up for part of it, which washes out the faint glow.")
+                        }
                     }
                 }
             } else {
