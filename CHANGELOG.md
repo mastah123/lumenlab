@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.35.0] - 2026-11-27
+
+### Added
+- METEOR mode (meteor and satellite catcher). Put the phone on a support, preferably plugged in, facing a clear sky, choose how long to watch (10 min, 30 min, 1 h, 2 h or until you stop), the exposure (the longest time before stars smear, or 10, 15 or 20 s) and ISO, and press the shutter. Focus is at infinity and everything is fixed by hand. Each photo is checked while the next one is taken. A streak is a long, thin, bright line that was not in the previous photo, so round and slowly drifting stars, hot pixels, a lit ground or a glow are not counted. Only photos with a streak are saved, at full size, to Pictures/Lumenlab/METEOR. When the watch ends one more picture is made from all the caught photos, with the stars lined up and every streak kept. Listed in the gallery under Results and a new Meteor chip. The screen shows the photos checked, the streaks caught, the minutes watched and the last catches, with the last caught photo over the preview.
+- A notification when the watch ends if the app is not on screen (Settings, Notifications).
+- Unit tests for finding a long streak and its direction, ignoring stars and a bright ground, a streak that was already in the previous photo, short streaks, two streaks at once and growing a mask.
+
+### Notes
+- The mode cannot tell a meteor from a satellite or an aeroplane. It only finds streaks; you decide what they are.
+- The first photo of a watch has nothing to compare with, so it is never counted.
+- Long watches heat the phone and use the battery. The temperature chip is shown, and it is best to plug the phone in.
+- Checking is done on a 1000 px copy of each photo, so very faint or very short streaks can be missed. The saved photos are full size.
+- Needs manual exposure support; otherwise the mode says it is not available.
+
 ## [0.34.0] - 2026-11-26
 
 ### Added

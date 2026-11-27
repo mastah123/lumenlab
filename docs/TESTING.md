@@ -13,6 +13,7 @@ Runs on the JVM, no phone needed. CI runs it before building the APKs.
 | `LongExposurePlanTest` | Exposure path verdict (hardware, stacking, auto boost, none, error), frame plan and SNR gain, brightness check, exposure text |
 | `StackProgressTest` | Time-left text and progress text |
 | `StarAlignTest` | Star matching with shift and turn, large turn search, resampling, edge margins |
+| `StreakDetectorTest` | Long streak and its direction, stars and ground ignored, static lines ignored, short streaks ignored, two streaks, growing a mask |
 | `MilkyTest` | Azimuth, Milky Way core windows, compass, horizon blend, sky tone, horizon guess, shrinking |
 | `SkyInfoTest` | Sunrise and sunset, new and full moon times, phase names, moonrise drift, dark and moonless time, advice text |
 | `SessionPlanTest` | Frame count, time and storage numbers, storage, battery and heat warnings, duration and size text |
@@ -56,6 +57,7 @@ Not covered by automated tests: Camera2 capture, stacking, panorama and double e
 - [ ] MORE: Moon and sky tile opens the screen; the phase and lit share match a moon app; "Use the phone's position" asks for permission and fills latitude and longitude (or says there is no saved position); typed position saves and the times update; sunrise, sunset and moonrise are within about 10 minutes of a trusted source; the dark and moonless lines look sensible; back arrow returns to the camera
 - [ ] MILKY: on a support under a dark sky with the core up, the ready line shows the window; Photos, Exposure and ISO chips work; shutter takes the photos with a progress bar, a second press stops after 3; the Editing screen shows the blended picture, Horizon, Soft edge and Sky boost sliders change it live; the guessed horizon is close to the real one; Save writes to Pictures/Lumenlab/MILKYWAY and it appears in the Gallery (Results and Milky Way); stars are sharp in the sky and the ground is sharp; Discard returns to the camera; phone without manual exposure says so
 - [ ] MORE, Moon and sky: the Milky Way core card matches a sky app
+- [ ] METEOR: on a support under a clear sky, Watch for, Each photo and ISO chips work; shutter starts, the counts and minutes update, the last caught photo shows over the preview; a plane or satellite or meteor during the watch is caught and saved to Pictures/Lumenlab/METEOR; stars alone and a car light on the ground are not counted over 100 photos; the shutter stops the watch and one combined picture is made when two or more were caught; Gallery shows Results and Meteor; with the app in the background a notification arrives when the watch ends; phone without manual exposure says so
 - [ ] Mode tabs scroll sideways and the selected tab stays in view after switching mode
 - [ ] MORE: Stacking Studio, Camera Tester, Phone Check, tests shortcut
 - [ ] Settings: night mode (red), temperature protection, storage options
