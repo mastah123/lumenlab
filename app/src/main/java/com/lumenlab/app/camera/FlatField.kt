@@ -91,9 +91,9 @@ class FlatField(
             var n = 0
             for (y in y0 until y1) for (x in x0 until x1) {
                 val p = low[y * w + x]
-                sum[0] += (p shr 16) and 0xFF
-                sum[1] += (p shr 8) and 0xFF
-                sum[2] += p and 0xFF
+                sum[0] += ((p shr 16) and 0xFF).toDouble()
+                sum[1] += ((p shr 8) and 0xFF).toDouble()
+                sum[2] += (p and 0xFF).toDouble()
                 n++
             }
             return FloatArray(3) { max((sum[it] / n).toFloat(), 1f) }

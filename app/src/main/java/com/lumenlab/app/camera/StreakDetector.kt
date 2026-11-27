@@ -115,7 +115,7 @@ object StreakDetector {
             if (!novel[i]) continue
             val l = label[i]
             n[l]++
-            sx[l] += x; sy[l] += y
+            sx[l] += x.toDouble(); sy[l] += y.toDouble()
             sxx[l] += x.toDouble() * x; syy[l] += y.toDouble() * y; sxy[l] += x.toDouble() * y
         }
         val out = ArrayList<Streak>()
