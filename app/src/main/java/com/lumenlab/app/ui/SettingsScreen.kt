@@ -116,6 +116,9 @@ fun SettingsScreen(
                 SwitchRow("Correct sky rotation",
                     "Stars turn about 15° an hour. Lines up that turn as well as the shift. Slower; helps most on long sessions and when combining batches",
                     settings.rotateAlign) { onSettings(settings.copy(rotateAlign = it)) }
+                SwitchRow("Correct vignetting and dust",
+                    "Uses the flat frame made on the FLAT tab, if there is one, to brighten the corners and remove dust shadows before stacking",
+                    settings.useFlat) { onSettings(settings.copy(useFlat = it)) }
                 Text(
                     "How often to stack is set with the STACK slider on the camera screen.",
                     style = MaterialTheme.typography.bodySmall,

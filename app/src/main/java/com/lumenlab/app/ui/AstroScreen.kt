@@ -93,6 +93,7 @@ import com.lumenlab.app.camera.CaptureStore
 import com.lumenlab.app.camera.ControlLimits
 import com.lumenlab.app.camera.CrashLog
 import com.lumenlab.app.camera.DarkFrames
+import com.lumenlab.app.camera.FlatFrames
 import com.lumenlab.app.camera.Notifier
 import com.lumenlab.app.camera.FlashMode
 import com.lumenlab.app.camera.FrameRef
@@ -598,7 +599,9 @@ private fun AstroContent(
             val dark = if (darkFor.manual) {
                 withContext(Dispatchers.IO) { DarkFrames.load(context, darkFor.exposureNs, darkFor.iso) }
             } else null
-            val live = if (app.liveStacking && app.stackBatch >= 0 && app.frameCount > 1) Stacker.Live(method, dark, app.rotateAlign) else null
+            // The flat frame (vignetting and dust) belongs to one camera, so it is only used when it was made with this one.
+            val flat = if (app.useFlat) withContext(Dispatchers.IO) { FlatFrames.load(context, cameraId.replace(Regex("[^A-Za-z0-9]"), "")) } else null
+            val live = if (app.liveStacking && app.stackBatch >= 0 && app.frameCount > 1) Stacker.Live(method, dark, app.rotateAlign, flat) else null
             val liveChannel = Channel<Pair<Int, ByteArray>>(2)
             val liveAdded = Collections.synchronizedSet(mutableSetOf<Int>())
             var liveJob: Job? = null
@@ -663,7 +666,7 @@ private fun AstroContent(
                     )
                     val batchCount = max(1, (total + batch - 1) / max(1, batch))
                     val r = try {
-                        Stacker.stack(context, info, method, false, folder = "Lumenlab/STACKED/BATCHES", previews = false, dark = dark, rotate = app.rotateAlign) { _, f ->
+                        Stacker.stack(context, info, method, false, folder = "Lumenlab/STACKED/BATCHES", previews = false, dark = dark, rotate = app.rotateAlign, flat = flat) { _, f ->
                             stackFraction = (batchNo - 1 + f) / (batchCount + 1f)
                             phase = "Batch $batchNo of $batchCount · ${(f * 100).roundToInt()}%"
                         }
@@ -764,7 +767,7 @@ private fun AstroContent(
                             phase = "Stacking ${savedFrames.size} frames…"
                             val info = SessionInfo(session, savedFrames.toList(), used.exposureNs, used.iso, used.manual)
                             tracker.begin()
-                            finalResult = Stacker.stack(context, info, method, app.boost, bin = app.nightBin, dark = dark, rotate = app.rotateAlign) { label, f ->
+                            finalResult = Stacker.stack(context, info, method, app.boost, bin = app.nightBin, dark = dark, rotate = app.rotateAlign, flat = flat) { label, f ->
                                 stackFraction = f
                                 phase = formatProgress(label, f, tracker.etaSeconds(f))
                             }

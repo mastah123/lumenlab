@@ -16,8 +16,8 @@ android {
         applicationId = "com.lumenlab.app"
         minSdk = 28
         targetSdk = 34
-        versionCode = 39
-        versionName = "0.35.0"
+        versionCode = 40
+        versionName = "0.36.0"
     }
 
     signingConfigs {

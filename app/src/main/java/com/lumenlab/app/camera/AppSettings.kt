@@ -44,6 +44,7 @@ data class AppSettings(
     val nightBin: Boolean = false,
     val rotateAlign: Boolean = true,
     val notifyDone: Boolean = false,
+    val useFlat: Boolean = true,
     val grid: Int = 0,
     val trailFrames: Int = 3,
     val trailInterval: Int = 10,
@@ -82,6 +83,7 @@ object SettingsStore {
             nightBin = p.getBoolean("night_bin", d.nightBin),
             rotateAlign = p.getBoolean("rotate_align", d.rotateAlign),
             notifyDone = p.getBoolean("notify_done", d.notifyDone),
+            useFlat = p.getBoolean("use_flat", d.useFlat),
             grid = p.getInt("grid", d.grid),
             trailFrames = p.getInt("trail_frames", d.trailFrames),
             trailInterval = p.getInt("trail_interval", d.trailInterval),
@@ -104,6 +106,7 @@ object SettingsStore {
             .putBoolean("night_bin", s.nightBin)
             .putBoolean("rotate_align", s.rotateAlign)
             .putBoolean("notify_done", s.notifyDone)
+            .putBoolean("use_flat", s.useFlat)
             .putInt("grid", s.grid)
             .putInt("trail_frames", s.trailFrames)
             .putInt("trail_interval", s.trailInterval)

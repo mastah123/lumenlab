@@ -78,9 +78,10 @@ object Stacker {
         bin: Boolean = false,
         dark: DarkFrame? = null,
         rotate: Boolean = true,
+        flat: FlatField? = null,
         onProgress: (String, Float) -> Unit,
     ): StackResult = withContext(Dispatchers.Default) {
-        run(context, session, mode, boost, weights, folder, previews, bin, dark, rotate, onProgress)
+        run(context, session, mode, boost, weights, folder, previews, bin, dark, rotate, flat, onProgress)
     }
 
     private fun failure(message: String) =
@@ -97,6 +98,7 @@ object Stacker {
         bin: Boolean,
         dark: DarkFrame?,
         rotate: Boolean,
+        flat: FlatField?,
         onProgress: (String, Float) -> Unit,
     ): StackResult {
         val refs = session.frames.take(MAX_FRAMES)
@@ -169,7 +171,11 @@ object Stacker {
             val trim = average && weights == null && placed.size >= 5
             val highest = if (trim) ByteArray(iw * ih * 3) else null
             val lowest = if (trim) ByteArray(iw * ih * 3).also { it.fill(-1) } else null
-            val dk = dark?.takeIf { it.width == width && it.height == height }?.pixels
+            val fl = flat?.takeIf { it.matches(width, height) }
+            // The flat is applied to the dark too, so (light - dark) is scaled the same way as the light.
+            val dk = dark?.takeIf { it.width == width && it.height == height }?.pixels?.let { d ->
+                if (fl != null) d.copyOf().also { fl.apply(it, width, height) } else d
+            }
             val warped = if (placed.any { it.theta != 0f }) IntArray(width * height) else null
             for ((i, p) in placed.withIndex()) {
                 currentCoroutineContext().ensureActive()
@@ -182,6 +188,7 @@ object Stacker {
                 }
                 bmp.getPixels(pixels, 0, width, 0, 0, width, height)
                 bmp.recycle()
+                fl?.apply(pixels, width, height)
                 val wgt = p.weight
                 var src = pixels
                 var shiftX = p.sx
@@ -371,7 +378,12 @@ object Stacker {
      * Stacks frames one at a time as they arrive, on a full-size canvas. Call [add] for every
      * frame in order, then [finish]. Not thread-safe: feed it from one coroutine.
      */
-    class Live(private val mode: StackMode, private val dark: DarkFrame? = null, private val rotate: Boolean = true) {
+    class Live(
+        private val mode: StackMode,
+        private val dark: DarkFrame? = null,
+        private val rotate: Boolean = true,
+        private val flat: FlatField? = null,
+    ) {
         private val average = mode == StackMode.Average
         private var width = 0
         private var height = 0
@@ -433,6 +445,8 @@ object Stacker {
                         max(0, (p and 0xFF) - (q and 0xFF))
                 }
             }
+
+            flat?.takeIf { it.matches(w, h) }?.apply(px, w, h)
 
             var sx = 0
             var sy = 0

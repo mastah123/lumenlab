@@ -42,6 +42,7 @@ enum class Mode(val label: String) {
     Paint("PAINT"),
     Milky("MILKY"),
     Meteor("METEOR"),
+    Flat("FLAT"),
     More("MORE"),
 }
 

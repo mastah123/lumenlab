@@ -27,6 +27,7 @@ import com.lumenlab.app.ui.AstroTheme
 import com.lumenlab.app.ui.DoubleExposureScreen
 import com.lumenlab.app.ui.LiveTestScreen
 import com.lumenlab.app.ui.Mode
+import com.lumenlab.app.ui.FlatScreen
 import com.lumenlab.app.ui.FocusStackScreen
 import com.lumenlab.app.ui.HdrScreen
 import com.lumenlab.app.ui.MeteorScreen
@@ -158,6 +159,12 @@ private fun LumenlabApp() {
                         tabs = tabs,
                     )
                     Mode.Meteor -> MeteorScreen(
+                        limits = limitsForControls,
+                        settings = settings,
+                        onOpenSettings = { screen = Screen.Settings },
+                        tabs = tabs,
+                    )
+                    Mode.Flat -> FlatScreen(
                         limits = limitsForControls,
                         settings = settings,
                         onOpenSettings = { screen = Screen.Settings },

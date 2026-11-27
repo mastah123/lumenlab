@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.36.0] - 2026-11-27
+
+### Added
+- FLAT mode (flat frames). Cover the lens with a white t-shirt or paper facing a bright light, or aim at an evenly lit white screen, and press the shutter. 16 photos are taken with the brightness picked by the camera and then held, averaged, and saved as a flat frame. The flat is refused with a message if the surface was too dark or too bright. One flat is kept, for the camera and picture size it was made with; a new one replaces it and Delete removes it.
+- Flat correction in stacking. When a flat exists, every light frame is brightened by it before stacking, so the dark corners (vignetting) come up to the level of the centre and the shadows of dust specks disappear. It is applied in live stacking, batch stacking and the STACK screen, after the frame is read and with the dark frame treated the same way. ASTRO uses it only when it was made with the same camera; the STACK screen uses it when the picture size matches. Settings, Stacking, "Correct vignetting and dust" turns it off (on by default; it only has an effect when a flat exists).
+- The flat is stored at a quarter of the picture size (small file, still shows dust rings) and enlarged smoothly when applied. Each colour is measured against its own level in the middle, so the centre of the picture is unchanged, no colour shift is added, and the correction is limited to between half and three times.
+- Unit tests for flattening vignetting, removing a dust shadow, no colour shift in the centre, the gain limits and wrong sizes, and the exposure check.
+
+### Notes
+- Take the flat with the same camera, zoom and focus as the night photos, and do not move the lens cover or the phone's cleaning between the flat and the lights: dust moves.
+- The phone's own picture processing already corrects part of the vignetting, so the flat mostly adds the rest and the dust.
+- Flats made through the phone's JPEG processing cannot correct everything a RAW flat could; RAW stacking comes in a later release.
+- If you change cameras, the flat of another camera is not used by ASTRO.
+
 ## [0.35.0] - 2026-11-27
 
 ### Added
