@@ -57,6 +57,12 @@ object CaptureStore {
             .getOrNull()?.let { name }
     }
 
+    /** Saves a stacked RAW file. Returns where it went, or null. */
+    fun saveRawStack(context: Context, dng: ByteArray, name: String): Saved? {
+        val location = runCatching { write(context, dng, name, "image/x-adobe-dng", "Lumenlab/RAWSTACK") }.getOrNull() ?: return null
+        return Saved(name, location)
+    }
+
     /** Saves a stacked image. */
     fun saveStacked(context: Context, jpeg: ByteArray, name: String, folder: String): Saved? {
         val location = runCatching { write(context, jpeg, name, "image/jpeg", folder) }.getOrNull() ?: return null

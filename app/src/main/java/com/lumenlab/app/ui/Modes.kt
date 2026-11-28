@@ -44,6 +44,7 @@ enum class Mode(val label: String) {
     Meteor("METEOR"),
     Flat("FLAT"),
     Lapse("LAPSE"),
+    RawStack("RAW"),
     More("MORE"),
 }
 

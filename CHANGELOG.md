@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.38.0] - 2026-11-28
+
+### Added
+- RAW mode: takes 4, 8, 16 or 32 RAW frames with fixed exposure and ISO, averages them in the RAW data and saves one DNG to Pictures/Lumenlab/RAWSTACK.
+- Averaging drops the lowest and highest value of each pixel from four frames up, which removes satellites, planes and one-off hot pixels.
+- The DNG keeps the camera's metadata and orientation, and the camera RAW size is checked against available memory before shooting.
+- Pure logic with tests: RawStack.
+
+### Known limits
+- Frames are not aligned, so stars trail on long frames or without a tripod.
+- The preview pauses while RAW frames are taken. DNG files do not show in the in-app Gallery. Untested on a real phone.
+
 ## [0.37.0] - 2026-11-28
 
 ### Added

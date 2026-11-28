@@ -10,7 +10,7 @@ Lumenlab does not assume every phone is the same. It inspects the device through
 
 ## Status
 
-Version 0.37.0 covers **Stages 1 to 5**, plus camera modes (NORMAL, ASTRO, TRAILS, DOUBLE, PANO, SUPER, FOCUS, HDR, NIGHT, MOON, PAINT, MILKY, METEOR, FLAT, LAPSE and MORE), a **Stacking Studio**, automatic stacking while capturing, storage-saving options and temperature protection. Earlier stages: capability detection, an experimental **long exposure probe**, a live preview with manual controls, and multi-frame capture with a self-timer. A **RAW capture test** checks whether the phone really supports RAW.
+Version 0.38.0 covers **Stages 1 to 5**, plus camera modes (NORMAL, ASTRO, TRAILS, DOUBLE, PANO, SUPER, FOCUS, HDR, NIGHT, MOON, PAINT, MILKY, METEOR, FLAT, LAPSE, RAW and MORE), a **Stacking Studio**, automatic stacking while capturing, storage-saving options and temperature protection. Earlier stages: capability detection, an experimental **long exposure probe**, a live preview with manual controls, and multi-frame capture with a self-timer. A **RAW capture test** checks whether the phone really supports RAW.
 
 | Stage | Scope | State |
 |-------|-------|-------|
@@ -112,3 +112,4 @@ See [docs/TESTING.md](docs/TESTING.md) for what is covered and the manual checkl
 
 See [CHANGELOG.md](CHANGELOG.md). This project follows [Semantic Versioning](https://semver.org).
 - **Timelapse (LAPSE):** a photo every 2 to 60 seconds, joined into an H.264 MP4 saved to Movies/Lumenlab, with optional locked exposure and flicker smoothing. Videos are not listed in the in-app Gallery yet.
+- **RAW stack (RAW):** takes 4 to 32 RAW frames with fixed settings, averages them without losing the sensor data (the highest and lowest value per pixel are dropped from four frames up) and saves one DNG to Pictures/Lumenlab/RAWSTACK. Frames are not aligned, so use a tripod and short frames.

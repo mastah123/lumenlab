@@ -36,6 +36,7 @@ import com.lumenlab.app.ui.MoonScreen
 import com.lumenlab.app.ui.NightScreen
 import com.lumenlab.app.ui.PaintScreen
 import com.lumenlab.app.ui.LapseScreen
+import com.lumenlab.app.ui.RawStackScreen
 import com.lumenlab.app.ui.GalleryScreen
 import com.lumenlab.app.ui.ModeTabs
 import com.lumenlab.app.ui.MoreScreen
@@ -142,6 +143,12 @@ private fun LumenlabApp() {
                         tabs = tabs,
                     )
                     Mode.Moon -> MoonScreen(
+                        limits = limitsForControls,
+                        settings = settings,
+                        onOpenSettings = { screen = Screen.Settings },
+                        tabs = tabs,
+                    )
+                    Mode.RawStack -> RawStackScreen(
                         limits = limitsForControls,
                         settings = settings,
                         onOpenSettings = { screen = Screen.Settings },
