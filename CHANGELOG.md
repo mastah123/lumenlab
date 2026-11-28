@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.37.0] - 2026-11-28
+
+### Added
+- LAPSE mode: timelapse with a photo every 2, 5, 10, 30 or 60 s, shoot lengths from 10 min to until stopped, 24 or 30 fps, 720p or 1080p.
+- Videos are encoded on the phone (H.264 MP4) and saved to Movies/Lumenlab, with a Play button and a finish notification.
+- Optional exposure lock and flicker smoothing (brightness evened out between neighbouring frames).
+- Pure logic with tests: LapsePlan, Deflicker, YuvConvert.
+
+### Known limits
+- Encoder and screen are untested on a real phone. Videos do not appear in the in-app Gallery.
+
 ## [0.36.0] - 2026-11-27
 
 ### Added
